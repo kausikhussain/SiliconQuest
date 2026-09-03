@@ -350,6 +350,13 @@ export const CLUB_MEMBERS: ClubMember[] = [
     image: '/assets/images/Members/Sourav.jpeg'
   },
   {
+    id: 'snr-saurav-kr',
+    name: 'Saurav Kumar',
+    designation: 'SENIOR COORDINATOR',
+    tier: 'senior_coordinator',
+    image: '/assets/images/Members/Saurav Kumar.jpeg'
+  },
+  {
     id: 'snr-ujjwal',
     name: 'Ujjwal',
     designation: 'SENIOR COORDINATOR',

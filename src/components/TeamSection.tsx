@@ -770,8 +770,16 @@ export const TeamSection: React.FC = () => {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 14px;
-          max-width: 1080px;
+          max-width: 1140px;
           margin: 0 auto;
+        }
+        @media (max-width: 639px) {
+          .senior-coordinators-grid > :last-child:nth-child(odd) {
+            grid-column: span 2;
+            max-width: 280px;
+            margin: 0 auto;
+            width: 100%;
+          }
         }
         .senior-portrait-box {
           position: relative;
@@ -839,7 +847,7 @@ export const TeamSection: React.FC = () => {
         /* Responsive Breakpoints */
         @media (min-width: 640px) {
           .senior-coordinators-grid {
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 16px;
           }
           .coordinators-grid {
@@ -890,12 +898,16 @@ export const TeamSection: React.FC = () => {
           .faculty-details {
             padding: 48px 40px;
           }
+          .senior-coordinators-grid {
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+          }
           .coordinators-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
           }
           .senior-portrait-box {
-            height: 280px;
+            height: 250px;
           }
           .coordinator-portrait-box {
             height: 290px;
