@@ -17,7 +17,8 @@ import {
   CheckCircle2,
   Copy,
   Check,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Trash2
 } from 'lucide-react';
 import { sound } from '../utils/soundEngine';
 
@@ -180,10 +181,42 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     setSelectedStudent(null);
   };
 
+  const [isClearing, setIsClearing] = useState(false);
+
   const handleExportCSV = () => {
     if (!token) return;
     sound.playClick();
     window.location.href = `/api/admin/export-csv?token=${encodeURIComponent(token)}`;
+  };
+
+  const handleClearAll = async () => {
+    if (!token) return;
+    const confirmed = window.confirm(
+      'Are you sure you want to remove ALL registered student records? This will clear all entries from the system.'
+    );
+    if (!confirmed) return;
+
+    setIsClearing(true);
+    sound.playClick();
+    try {
+      const res = await safeApiRequest('/api/admin/clear', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok && res.data?.success) {
+        setRegistrations([]);
+        setStats(null);
+        setSelectedStudent(null);
+        alert('All registrations have been removed successfully.');
+      } else {
+        alert(res.error || res.data?.message || 'Failed to clear registrations.');
+      }
+    } catch (err: any) {
+      alert(err.message || 'Error clearing registrations.');
+    } finally {
+      setIsClearing(false);
+      fetchRegistrations(token);
+    }
   };
 
   const handleCopyRef = (refId: string) => {
@@ -469,6 +502,25 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                 >
                   <Download size={14} />
                   <span>EXPORT CSV</span>
+                </button>
+
+                <button
+                  onClick={handleClearAll}
+                  disabled={isClearing || (registrations.length === 0 && (!stats || stats.total === 0))}
+                  className="btn-secondary"
+                  style={{
+                    padding: '8px 14px',
+                    fontSize: '0.78rem',
+                    gap: '6px',
+                    borderColor: 'rgba(239, 68, 68, 0.35)',
+                    color: '#ef4444',
+                    opacity: (registrations.length === 0 && (!stats || stats.total === 0)) ? 0.5 : 1
+                  }}
+                  title="Remove all registration entries"
+                  onMouseEnter={() => sound.playHover()}
+                >
+                  <Trash2 size={14} />
+                  <span>{isClearing ? 'CLEARING...' : 'CLEAR ALL'}</span>
                 </button>
 
                 <button
