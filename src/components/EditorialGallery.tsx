@@ -83,6 +83,13 @@ export const EditorialGallery: React.FC = () => {
     touchStartYRef.current = null;
   };
 
+  // Determine tile sizing: featured photos get large, others alternate
+  const getTileClass = (photo: GalleryPhoto, idx: number): string => {
+    if (photo.featured) return 'gallery-tile-featured';
+    if (idx % 7 === 3) return 'gallery-tile-wide';
+    return 'gallery-tile-standard';
+  };
+
   return (
     <section
       id="gallery"
@@ -108,12 +115,12 @@ export const EditorialGallery: React.FC = () => {
           className="gallery-header-row"
         >
           <div>
-            <div className="section-tagline">07 · VISUAL ARCHIVE</div>
+            <div className="section-tagline">06 · VISUAL ARCHIVE</div>
             <h2 className="section-title">
               EDITORIAL <span style={{ color: 'var(--accent-cyan)' }}>GALLERY</span>
             </h2>
             <p className="section-subtitle">
-              Authentic chronicles of high-intensity buzzer rounds, stage presentations, and podium laurels.
+              Authentic chronicles from buzzer rounds, stage presentations, and podium ceremonies.
             </p>
           </div>
 
@@ -129,9 +136,9 @@ export const EditorialGallery: React.FC = () => {
             className="gallery-filter-pills hide-scrollbar"
           >
             {[
-              { id: 'all', label: 'All Chronicles' },
+              { id: 'all', label: 'All' },
               { id: 'championship', label: 'Championships' },
-              { id: 'live-stage', label: 'Live Stages' },
+              { id: 'live-stage', label: 'Live Stage' },
               { id: 'prelims', label: 'Prelims' },
               { id: 'audience', label: 'Audience' }
             ].map((tab) => (
@@ -163,87 +170,64 @@ export const EditorialGallery: React.FC = () => {
           </div>
         </div>
 
-        {/* Gallery Grid (Responsive Masonry) */}
-        <div
-          style={{
-            display: 'grid',
-            gap: '16px'
-          }}
-          className="editorial-gallery-grid"
-        >
-          {filteredPhotos.map((photo, idx) => {
-            const isSpan2 = idx % 5 === 0 || idx % 7 === 0;
-
-            return (
-              <div
-                key={photo.id}
-                onClick={() => openLightbox(photo, idx)}
-                className={`glass-panel gallery-card ${isSpan2 ? 'gallery-card-span-2' : ''}`}
+        {/* Gallery Grid — Editorial Masonry */}
+        <div className="editorial-gallery-grid">
+          {filteredPhotos.map((photo, idx) => (
+            <div
+              key={photo.id}
+              onClick={() => openLightbox(photo, idx)}
+              className={`glass-panel gallery-card ${getTileClass(photo, idx)}`}
+              style={{
+                borderRadius: '16px',
+                overflow: 'hidden',
+                position: 'relative',
+                cursor: 'pointer'
+              }}
+              onMouseEnter={() => sound.playHover()}
+            >
+              <img
+                src={photo.src}
+                alt={photo.title}
+                className="img-hover-shine gallery-card-img"
                 style={{
-                  borderRadius: '18px',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  cursor: 'pointer',
-                  minHeight: '220px'
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
                 }}
-                onMouseEnter={() => sound.playHover()}
-              >
-                <img
-                  src={photo.src}
-                  alt={photo.title}
-                  className="img-hover-shine"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
-                  }}
-                  loading="lazy"
-                />
+                loading="lazy"
+              />
 
-                {/* Scrim Overlay */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'linear-gradient(to top, rgba(7, 9, 14, 0.92) 0%, transparent 60%)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'flex-end',
-                    padding: '18px 20px',
-                    opacity: 0.95,
-                    transition: 'opacity 0.3s ease'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span
-                      className="font-mono"
-                      style={{
-                        fontSize: '0.65rem',
-                        color: 'var(--accent-cyan)',
-                        letterSpacing: '0.1em',
-                        textTransform: 'uppercase'
-                      }}
-                    >
-                      {photo.date}
-                    </span>
-                    <Maximize2 size={15} color="#ffffff" />
-                  </div>
-
-                  <h4
-                    className="font-display"
+              {/* Minimal Overlay — Title only, full caption in lightbox */}
+              <div className="gallery-card-overlay">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '3px' }}>
+                  <span
+                    className="font-mono"
                     style={{
-                      fontSize: '1rem',
-                      fontWeight: 700,
-                      color: '#ffffff',
-                      lineHeight: 1.3
+                      fontSize: '0.6rem',
+                      color: 'var(--accent-cyan)',
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase'
                     }}
                   >
-                    {photo.caption}
-                  </h4>
+                    {photo.categoryLabel}
+                  </span>
+                  <Maximize2 size={13} color="#ffffff" style={{ opacity: 0.6 }} />
                 </div>
+
+                <h4
+                  className="font-display"
+                  style={{
+                    fontSize: '0.88rem',
+                    fontWeight: 700,
+                    color: '#ffffff',
+                    lineHeight: 1.25
+                  }}
+                >
+                  {photo.title}
+                </h4>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -434,14 +418,48 @@ export const EditorialGallery: React.FC = () => {
 
       <style>{`
         .editorial-gallery-grid {
+          display: grid;
           grid-template-columns: 1fr;
+          gap: 14px;
         }
+        .gallery-card {
+          min-height: 200px;
+        }
+        .gallery-card-img {
+          transition: transform 0.5s ease;
+        }
+        .gallery-card:hover .gallery-card-img {
+          transform: scale(1.04);
+        }
+        .gallery-card-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(to top, rgba(7, 9, 14, 0.9) 0%, rgba(7, 9, 14, 0.2) 40%, transparent 60%);
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          padding: 16px 18px;
+          transition: opacity 0.3s ease;
+        }
+
         @media (min-width: 600px) {
           .editorial-gallery-grid {
             grid-template-columns: repeat(2, 1fr);
-            gap: 18px;
+            gap: 16px;
+          }
+          .gallery-tile-featured {
+            grid-column: span 2;
+            min-height: 320px;
+          }
+          .gallery-tile-wide {
+            grid-column: span 2;
+            min-height: 260px;
+          }
+          .gallery-tile-standard {
+            min-height: 240px;
           }
         }
+
         @media (min-width: 1024px) {
           .gallery-main-section {
             padding: 120px 0;
@@ -450,13 +468,21 @@ export const EditorialGallery: React.FC = () => {
             margin-bottom: 48px;
           }
           .editorial-gallery-grid {
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             grid-auto-rows: 260px;
-            gap: 20px;
+            gap: 18px;
           }
-          .gallery-card-span-2 {
+          .gallery-tile-featured {
             grid-column: span 2;
             grid-row: span 2;
+            min-height: auto;
+          }
+          .gallery-tile-wide {
+            grid-column: span 2;
+            min-height: auto;
+          }
+          .gallery-tile-standard {
+            min-height: auto;
           }
         }
       `}</style>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ExternalLink, Mail } from 'lucide-react';
 import { TEAM_PROFILES } from '../data/clubData';
 import { sound } from '../utils/soundEngine';
 
@@ -18,42 +18,35 @@ export const TeamSection: React.FC = () => {
       <div className="section-container">
         {/* Section Header */}
         <div style={{ marginBottom: '40px' }} className="team-header">
-          <div className="section-tagline">08 · LEADERSHIP & FACULTY</div>
+          <div className="section-tagline">07 · LEADERSHIP & FACULTY</div>
           <h2 className="section-title">
             THE INTELLECTUAL <span style={{ color: 'var(--accent-cyan)' }}>SYNDICATE</span>
           </h2>
           <p className="section-subtitle">
-            Curators, tournament arbiters, and faculty mentors steering the analytical direction of Silicon Quiz Club.
+            The curators, tournament arbiters, and mentors directing the analytical mission of Silicon Quiz Club.
           </p>
         </div>
 
-        {/* Editorial Profile Grid */}
-        <div
-          style={{
-            display: 'grid',
-            gap: '24px'
-          }}
-          className="team-profiles-grid"
-        >
-          {TEAM_PROFILES.map((member) => (
+        {/* Editorial Profile Cards — Alternating Layout */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {TEAM_PROFILES.map((member, idx) => (
             <div
               key={member.id}
-              className="glass-panel"
+              className={`glass-panel team-profile-card ${idx % 2 === 1 ? 'team-profile-reversed' : ''}`}
               style={{
                 borderRadius: '20px',
                 overflow: 'hidden',
                 border: '1px solid var(--border-subtle)',
-                display: 'flex',
-                flexDirection: 'column',
+                display: 'grid',
                 transition: 'all 0.3s ease'
               }}
               onMouseEnter={() => sound.playHover()}
             >
               {/* Portrait Image */}
               <div
+                className="team-profile-portrait"
                 style={{
                   position: 'relative',
-                  height: '280px',
                   overflow: 'hidden',
                   background: 'var(--bg-surface-elevated)'
                 }}
@@ -69,15 +62,16 @@ export const TeamSection: React.FC = () => {
                     filter: 'grayscale(20%) contrast(1.08) brightness(0.95)',
                     transition: 'all 0.5s ease'
                   }}
-                  className="team-member-portrait"
+                  className="team-member-portrait-img"
                   loading="lazy"
                 />
 
+                {/* Gradient scrim */}
                 <div
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(180deg, transparent 40%, var(--bg-card) 100%)'
+                    background: 'linear-gradient(180deg, transparent 50%, rgba(7, 9, 14, 0.4) 100%)'
                   }}
                 />
 
@@ -89,50 +83,65 @@ export const TeamSection: React.FC = () => {
                     left: '14px'
                   }}
                 >
-                  <span className="badge-tag" style={{ background: 'var(--bg-card)' }}>
+                  <span
+                    className="badge-tag"
+                    style={{
+                      background: 'rgba(7, 9, 14, 0.85)',
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid var(--border-subtle)'
+                    }}
+                  >
                     <Sparkles size={11} />
-                    {member.role}
+                    {member.role.split('/')[0].trim()}
                   </span>
                 </div>
               </div>
 
-              {/* Member Details */}
+              {/* Content */}
               <div
+                className="team-profile-content"
                 style={{
-                  padding: '24px 20px',
+                  padding: '28px 24px',
                   display: 'flex',
                   flexDirection: 'column',
-                  flex: 1
+                  justifyContent: 'center',
+                  backgroundColor: 'var(--bg-card)'
                 }}
               >
-                <div style={{ marginBottom: '10px' }}>
-                  <h3
-                    className="font-display"
-                    style={{
-                      fontSize: '1.3rem',
-                      fontWeight: 800,
-                      color: 'var(--text-primary)',
-                      marginBottom: '3px'
-                    }}
-                  >
-                    {member.name}
-                  </h3>
-                  <span
-                    className="font-mono"
-                    style={{
-                      fontSize: '0.7rem',
-                      color: 'var(--accent-cyan)',
-                      letterSpacing: '0.08em',
-                      textTransform: 'uppercase'
-                    }}
-                  >
-                    {member.title}
-                  </span>
-                </div>
+                {/* Name (large, editorial) */}
+                <h3
+                  className="font-display"
+                  style={{
+                    fontSize: 'clamp(1.2rem, 2.5vw, 1.5rem)',
+                    fontWeight: 800,
+                    color: 'var(--text-primary)',
+                    letterSpacing: '-0.01em',
+                    marginBottom: '4px',
+                    lineHeight: 1.2
+                  }}
+                >
+                  {member.name}
+                </h3>
 
+                {/* Title (mono, subtle) */}
+                <span
+                  className="font-mono"
+                  style={{
+                    fontSize: '0.7rem',
+                    color: 'var(--accent-cyan)',
+                    letterSpacing: '0.06em',
+                    textTransform: 'uppercase',
+                    marginBottom: '14px',
+                    display: 'block'
+                  }}
+                >
+                  {member.title}
+                </span>
+
+                {/* Concise contribution statement */}
                 <p
                   style={{
-                    fontSize: '0.85rem',
+                    fontSize: '0.88rem',
                     lineHeight: 1.6,
                     color: 'var(--text-secondary)',
                     marginBottom: '18px'
@@ -141,20 +150,20 @@ export const TeamSection: React.FC = () => {
                   {member.bio}
                 </p>
 
-                {/* Domain Specializations */}
-                <div style={{ marginTop: 'auto', paddingTop: '14px', borderTop: '1px solid var(--border-subtle)' }}>
+                {/* Specialties */}
+                <div style={{ marginBottom: '16px' }}>
                   <span
                     className="font-mono"
                     style={{
                       display: 'block',
-                      fontSize: '0.65rem',
+                      fontSize: '0.6rem',
                       color: 'var(--text-muted)',
-                      letterSpacing: '0.1em',
+                      letterSpacing: '0.12em',
                       textTransform: 'uppercase',
                       marginBottom: '6px'
                     }}
                   >
-                    RESEARCH VERTICALS
+                    DOMAINS
                   </span>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                     {member.specialty.map((spec: string, i: number) => (
@@ -162,9 +171,9 @@ export const TeamSection: React.FC = () => {
                         key={i}
                         className="font-mono"
                         style={{
-                          fontSize: '0.7rem',
-                          padding: '4px 8px',
-                          borderRadius: '6px',
+                          fontSize: '0.68rem',
+                          padding: '4px 10px',
+                          borderRadius: '8px',
                           background: 'var(--btn-secondary-bg)',
                           border: '1px solid var(--border-subtle)',
                           color: 'var(--text-secondary)'
@@ -175,6 +184,58 @@ export const TeamSection: React.FC = () => {
                     ))}
                   </div>
                 </div>
+
+                {/* Contact Links */}
+                {member.socials && (
+                  <div style={{ display: 'flex', gap: '8px', marginTop: 'auto', paddingTop: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+                    {member.socials.linkedin && (
+                      <a
+                        href={member.socials.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono"
+                        style={{
+                          fontSize: '0.68rem',
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          background: 'var(--btn-secondary-bg)',
+                          border: '1px solid var(--border-subtle)',
+                          color: 'var(--text-secondary)',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <ExternalLink size={11} />
+                        LinkedIn
+                      </a>
+                    )}
+                    {member.socials.email && (
+                      <a
+                        href={`mailto:${member.socials.email}`}
+                        className="font-mono"
+                        style={{
+                          fontSize: '0.68rem',
+                          padding: '6px 12px',
+                          borderRadius: '8px',
+                          background: 'var(--btn-secondary-bg)',
+                          border: '1px solid var(--border-subtle)',
+                          color: 'var(--text-secondary)',
+                          textDecoration: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        <Mail size={11} />
+                        Contact
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -182,14 +243,35 @@ export const TeamSection: React.FC = () => {
       </div>
 
       <style>{`
-        .team-profiles-grid {
+        .team-profile-card {
           grid-template-columns: 1fr;
         }
-        @media (min-width: 640px) {
-          .team-profiles-grid {
-            grid-template-columns: repeat(2, 1fr);
+        .team-profile-portrait {
+          min-height: 260px;
+        }
+        .team-profile-card:hover .team-member-portrait-img {
+          transform: scale(1.03);
+          filter: grayscale(0%) contrast(1.1) brightness(1);
+        }
+
+        @media (min-width: 768px) {
+          .team-profile-card {
+            grid-template-columns: 2fr 3fr;
+          }
+          .team-profile-reversed {
+            direction: rtl;
+          }
+          .team-profile-reversed > * {
+            direction: ltr;
+          }
+          .team-profile-portrait {
+            min-height: 320px;
+          }
+          .team-profile-content {
+            padding: 32px 28px;
           }
         }
+
         @media (min-width: 1024px) {
           .team-main-section {
             padding: 120px 0;
@@ -197,9 +279,14 @@ export const TeamSection: React.FC = () => {
           .team-header {
             margin-bottom: 64px;
           }
-          .team-profiles-grid {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 32px;
+          .team-profile-card {
+            grid-template-columns: 2fr 3fr;
+          }
+          .team-profile-portrait {
+            min-height: 380px;
+          }
+          .team-profile-content {
+            padding: 40px 36px;
           }
         }
       `}</style>

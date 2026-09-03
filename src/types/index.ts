@@ -8,6 +8,7 @@ export interface ClubEvent {
   location: string;
   venue: string;
   description: string;
+  shortDescription: string;
   image: string;
   status: 'upcoming' | 'ongoing' | 'archived';
   highlights: string[];

@@ -5,7 +5,7 @@ import { HeroSection } from './components/HeroSection';
 import { AboutManifesto } from './components/AboutManifesto';
 import { DisciplinesSection } from './components/DisciplinesSection';
 import { EventShowcase } from './components/EventShowcase';
-import { PodiumLeaderboard } from './components/PodiumLeaderboard';
+
 import { EditorialGallery } from './components/EditorialGallery';
 import { TeamSection } from './components/TeamSection';
 import { KnowledgeVault } from './components/KnowledgeVault';
@@ -80,16 +80,13 @@ export const App: React.FC = () => {
           {/* 04 — WHAT WE DO / DISCIPLINES */}
           <DisciplinesSection />
 
-          {/* 05 — FLAGSHIP TOURNAMENTS & CALENDAR */}
+          {/* 05 — FLAGSHIP TOURNAMENTS & CHAMPIONSHIP ARCHIVES */}
           <EventShowcase onOpenRegisterModal={() => setIsJoinModalOpen(true)} />
 
-          {/* 06 — CHAMPIONSHIP LAURELS & HALL OF FAME */}
-          <PodiumLeaderboard />
-
-          {/* 07 — EDITORIAL GALLERY */}
+          {/* 06 — EDITORIAL GALLERY */}
           <EditorialGallery />
 
-          {/* 08 — TEAM & LEADERSHIP */}
+          {/* 07 — TEAM & LEADERSHIP */}
           <TeamSection />
 
           {/* 09 — KNOWLEDGE VAULT & RESOURCES */}

@@ -40,7 +40,8 @@ export const CLUB_EVENTS: ClubEvent[] = [
     category: 'Flagship League',
     location: 'Silicon Sambalpur Auditorium & Virtual Slido Arena',
     venue: 'Main Academic Block, Silicon Campus',
-    description: 'The flagship annual multi-tier championship bringing together the sharpest academic minds. Features multi-round elimination: Rapid Fire, Audio-Visual Clues, Lateral Connects, and the high-stakes Buzzer Final.',
+    description: 'The flagship annual multi-tier championship bringing together the sharpest minds across Eastern India. Multi-round elimination: Rapid Fire, Audio-Visual Clues, Lateral Connects, and high-stakes Buzzer Final.',
+    shortDescription: 'Flagship inter-collegiate championship with multi-round elimination and live buzzer finals.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.33 AM (1).jpeg',
     status: 'upcoming',
     registrationOpen: true,
@@ -65,8 +66,9 @@ export const CLUB_EVENTS: ClubEvent[] = [
     category: 'National Championship',
     location: 'Auditorium Hall, Silicon Institute of Technology, Sambalpur',
     venue: 'Stage One Arena',
-    description: 'An adrenaline-fueled speed league featuring rapid-fire visual connect rounds, clock calculations, and high-pressure planetary trivia witnessed by a packed house.',
-    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.39.09 AM.jpeg',
+    description: 'An adrenaline-fueled speed league featuring 20 live interactive rounds, real-time Slido telemetry, and high-pressure buzzer tiebreakers witnessed by a packed auditorium.',
+    shortDescription: 'Speed league with 20 live rounds, real-time scoring, and packed-house buzzer finals.',
+    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.39.13 AM.jpeg',
     status: 'archived',
     registrationOpen: false,
     highlights: [
@@ -75,9 +77,9 @@ export const CLUB_EVENTS: ClubEvent[] = [
       'High-decibel tiebreaker buzzer rounds'
     ],
     podium: {
-      first: 'Team Chronos (Priyabrata Pal & Ayush Jena)',
-      second: 'Team Nova (Sanya Sonalika & Saundarya Sinha)',
-      third: 'Team Apex (Satyam Chandra Nath & ARYAN DEO)'
+      first: 'Priyabrata Pal & Ayush Jena',
+      second: 'Sanya Sonalika & Saundarya Sinha',
+      third: 'Satyam Chandra Nath & ARYAN DEO'
     }
   },
   {
@@ -89,7 +91,8 @@ export const CLUB_EVENTS: ClubEvent[] = [
     category: 'Aptitude Challenge',
     location: 'Lecture Hall 04, Silicon Institute of Technology',
     venue: 'LH-04',
-    description: 'Focused academic and lateral thinking invitational designed to test mathematical shortcuts, astronomical anomalies, and deep tech fundamentals.',
+    description: 'Faculty-supervised analytical invitational testing mathematical shortcuts, astronomical anomalies, and deep tech fundamentals through rigorous pen-and-paper screening.',
+    shortDescription: 'Analytical invitational with pen-and-paper screening and faculty-supervised jury.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.32 AM.jpeg',
     status: 'archived',
     registrationOpen: false,
