@@ -28,13 +28,22 @@ const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 let pgPool = null;
 let pgReady = false;
 
+// Connection string: support DATABASE_URL, POSTGRES_URL, STORAGE_URL, etc.
+const DB_CONN_URL =
+  process.env.DATABASE_URL ||
+  process.env.POSTGRES_URL ||
+  process.env.STORAGE_URL ||
+  process.env.STORAGE_DATABASE_URL ||
+  process.env.POSTGRES_PRISMA_URL ||
+  process.env.POSTGRES_URL_NON_POOLING;
+
 async function initPostgres() {
-  if (!process.env.DATABASE_URL) return false;
+  if (!DB_CONN_URL) return false;
   try {
     const { default: pg } = await import('pg');
     pgPool = new pg.Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
+      connectionString: DB_CONN_URL,
+      ssl: DB_CONN_URL.includes('localhost') ? false : { rejectUnauthorized: false },
       max: 5,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000
