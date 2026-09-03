@@ -1,4 +1,4 @@
-import { ClubEvent, GalleryPhoto, KnowledgeResource, TeamProfile } from '../types';
+import { ClubEvent, GalleryPhoto, KnowledgeResource, TeamProfile, ClubMember } from '../types';
 
 export const CLUB_INFO = {
   name: 'SILICON QUIZ CLUB',
@@ -309,43 +309,169 @@ export const KNOWLEDGE_RESOURCES: KnowledgeResource[] = [
   }
 ];
 
+export const CLUB_MEMBERS: ClubMember[] = [
+  // TIER 01 — FACULTY / FIC
+  {
+    id: 'fic-padhi',
+    name: 'Dr. Chinmayee Padhi',
+    designation: 'FIC · QUIZ CLUB',
+    tier: 'fic',
+    image: '/assets/images/Members/Dr. Chinmayee Padhi.png',
+    bio: 'Faculty-in-Charge guiding the intellectual mission, institutional governance, and academic excellence of Silicon Quiz Club at Silicon Institute of Technology.',
+    department: 'Faculty-in-Charge · Silicon Institute of Technology'
+  },
+
+  // TIER 02 — SECRETARY
+  {
+    id: 'sec-kausik',
+    name: 'Kausik Hussain',
+    designation: 'SECRETARY · QUIZ CLUB',
+    tier: 'secretary',
+    image: '/assets/images/Members/Kausik Hussain.png',
+    bio: 'Chief student executive spearheading tournament architecture, collegiate syndicate representation, and inter-institutional championship coordination.'
+  },
+
+  // TIER 03 — JOINT SECRETARY
+  {
+    id: 'jsec-rupesh',
+    name: 'Rupesh Sahu',
+    designation: 'JOINT SECRETARY · QUIZ CLUB',
+    tier: 'joint_secretary',
+    image: '/assets/images/Members/Rupesh Sahu.jpeg',
+    bio: 'Co-directing stage operations, real-time arena telemetry, and high-velocity syndicate coordination across collegiate championships.'
+  },
+
+  // TIER 04 — SENIOR COORDINATORS
+  {
+    id: 'snr-sourav',
+    name: 'Sourav',
+    designation: 'SENIOR COORDINATOR',
+    tier: 'senior_coordinator',
+    image: '/assets/images/Members/Sourav.jpeg'
+  },
+  {
+    id: 'snr-ujjwal',
+    name: 'Ujjwal',
+    designation: 'SENIOR COORDINATOR',
+    tier: 'senior_coordinator',
+    image: '/assets/images/Members/Ujjwal Kumar Pandey.png'
+  },
+  {
+    id: 'snr-sneha',
+    name: 'Sneha',
+    designation: 'SENIOR COORDINATOR',
+    tier: 'senior_coordinator',
+    image: '/assets/images/Members/Sneha Rout Ray.jpeg'
+  },
+  {
+    id: 'snr-aakriti',
+    name: 'Aakriti',
+    designation: 'SENIOR COORDINATOR',
+    tier: 'senior_coordinator',
+    image: '/assets/images/Members/Aakriti Priya Pandit.png'
+  },
+
+  // TIER 05 & 06 — COORDINATORS
+  {
+    id: 'coord-rakesh',
+    name: 'Rakesh',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Rakesh barik.jpeg'
+  },
+  {
+    id: 'coord-baishnavi',
+    name: 'Baishnavi',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Baishnabi Bidyadhar.jpeg'
+  },
+  {
+    id: 'coord-rahul',
+    name: 'Rahul',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Rahul Pattnaik.jpeg'
+  },
+  {
+    id: 'coord-ankita',
+    name: 'Ankita Naik',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Ankita Naik.jpeg'
+  },
+  {
+    id: 'coord-anshuman',
+    name: 'Anshuman Choudhury',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Anshuman Choudhury.jpeg'
+  },
+  {
+    id: 'coord-haripriya',
+    name: 'Haripriya Meher',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Haripriya meher.jpeg'
+  },
+  {
+    id: 'coord-krishna',
+    name: 'Krishna Sahoo',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Krishna Sahoo.jpeg'
+  },
+  {
+    id: 'coord-smruti',
+    name: 'Smruti Ranjan Rout',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/SMRUTI RANJAN ROUT.jpeg'
+  },
+  {
+    id: 'coord-shivam',
+    name: 'Shivam Kumar Padhi',
+    designation: 'COORDINATOR',
+    tier: 'coordinator',
+    image: '/assets/images/Members/Shivam Kumar phadhi.png'
+  }
+];
+
 export const TEAM_PROFILES: TeamProfile[] = [
   {
-    id: 'lead-1',
-    name: 'President & Master Quizmaster',
-    role: 'Club President / Chief Quizmaster',
-    title: 'Lead Architect, Brainblast & College League',
-    specialty: ['Pop Culture Connects', 'Geopolitics', 'Arena Direction'],
-    bio: 'Directs the flagship tournament formats and hosts arena-scale quiz events at Silicon Institute of Technology, Sambalpur. Passionate about transforming obscure knowledge into electrifying storytelling.',
-    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.49.07 AM.jpeg',
+    id: 'fic-padhi',
+    name: 'Dr. Chinmayee Padhi',
+    role: 'FIC · QUIZ CLUB',
+    title: 'Faculty-in-Charge, Silicon Quiz Club',
+    specialty: ['Academic Oversight', 'Tournament Sanctioning', 'Institutional Governance'],
+    bio: 'Faculty-in-Charge guiding the intellectual mission, institutional governance, and academic excellence of Silicon Quiz Club at Silicon Institute of Technology.',
+    image: '/assets/images/Members/Dr. Chinmayee Padhi.png',
     socials: {
-      linkedin: 'https://linkedin.com',
+      email: 'fic.quiz@silicon.ac.in'
+    }
+  },
+  {
+    id: 'sec-kausik',
+    name: 'Kausik Hussain',
+    role: 'SECRETARY · QUIZ CLUB',
+    title: 'Chief Student Executive',
+    specialty: ['Tournament Architecture', 'Syndicate Direction', 'Arena Operations'],
+    bio: 'Chief student executive spearheading tournament architecture, collegiate syndicate representation, and inter-institutional championship coordination.',
+    image: '/assets/images/Members/Kausik Hussain.png',
+    socials: {
       email: 'quizclub@silicon.ac.in'
     }
   },
   {
-    id: 'lead-2',
-    name: 'Head of Research & Question Curation',
-    role: 'Vice President / Lead Researcher',
-    title: 'Curator of Hard Science & Lateral Rounds',
-    specialty: ['Science & Tech', 'Mathematical Logic', 'Fact Verification'],
-    bio: 'Oversees question rigor and archival accuracy. Ensures every question in the Silicon repository possesses verifiable depth and elegant deduction pathways.',
-    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.49.25 AM.jpeg',
+    id: 'jsec-rupesh',
+    name: 'Rupesh Sahu',
+    role: 'JOINT SECRETARY · QUIZ CLUB',
+    title: 'Joint Student Executive',
+    specialty: ['Stage Operations', 'Real-time Telemetry', 'Arena Logistics'],
+    bio: 'Co-directing stage operations, real-time arena telemetry, and high-velocity syndicate coordination across collegiate championships.',
+    image: '/assets/images/Members/Rupesh Sahu.jpeg',
     socials: {
-      linkedin: 'https://linkedin.com',
-      email: 'research.quiz@silicon.ac.in'
-    }
-  },
-  {
-    id: 'advisor-1',
-    name: 'Faculty Mentor & Advisory Board',
-    role: 'Faculty Advisor, Silicon Institute of Technology, Sambalpur',
-    title: 'Department of Applied Sciences & Humanities',
-    specialty: ['Academic Oversight', 'Tournament Sanctioning', 'Student Mentorship'],
-    bio: 'Provides institutional guidance and mentorship to Silicon Quiz Club, supporting student excellence, placement aptitude readiness, and academic enrichment.',
-    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.32 AM.jpeg',
-    socials: {
-      email: 'faculty.quiz@silicon.ac.in'
+      email: 'quizclub@silicon.ac.in'
     }
   }
 ];

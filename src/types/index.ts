@@ -46,6 +46,24 @@ export interface KnowledgeResource {
   downloadName: string;
 }
 
+export type OfficialDesignation =
+  | 'FIC · QUIZ CLUB'
+  | 'SECRETARY · QUIZ CLUB'
+  | 'JOINT SECRETARY · QUIZ CLUB'
+  | 'SENIOR COORDINATOR'
+  | 'COORDINATOR';
+
+export interface ClubMember {
+  id: string;
+  name: string;
+  designation: OfficialDesignation;
+  tier: 'fic' | 'secretary' | 'joint_secretary' | 'senior_coordinator' | 'coordinator';
+  image: string;
+  bio?: string;
+  department?: string;
+  badge?: string;
+}
+
 export interface TeamProfile {
   id: string;
   name: string;
