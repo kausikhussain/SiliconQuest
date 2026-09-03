@@ -2,7 +2,8 @@ import { handleApiRequest, sendJson } from '../../server/api.js';
 
 export default async function handler(req, res) {
   try {
-    req.url = req.url || '/api/admin/events';
+    const queryString = req.url?.split('?')[1] || '';
+    req.url = '/api/admin/events' + (queryString ? `?${queryString}` : '');
     const handled = await handleApiRequest(req, res);
     if (!handled) {
       sendJson(res, 404, { success: false, message: 'Endpoint not found' });

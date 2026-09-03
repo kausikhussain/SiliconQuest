@@ -19,7 +19,8 @@ import {
   Check,
   FileSpreadsheet,
   Radio,
-  Trash2
+  Trash2,
+  AlertCircle
 } from 'lucide-react';
 import { sound } from '../utils/soundEngine';
 import { useAdminRealtime, StudentRegistration, StatsData } from '../hooks/useAdminRealtime';
@@ -60,6 +61,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   // Real-time notification & visual highlighting
   const [highlightedRefId, setHighlightedRefId] = useState<string | null>(null);
   const [realtimeToast, setRealtimeToast] = useState<{ message: string; timestamp: number } | null>(null);
+  const [isClearing, setIsClearing] = useState(false);
 
   const fetchRegistrations = useCallback(
     async (authToken: string) => {
@@ -94,7 +96,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
         if (apiResult.data.dbStatus) setDbStatus(apiResult.data.dbStatus);
         if (typeof apiResult.data.isCloudDatabase === 'boolean') setIsCloudDb(apiResult.data.isCloudDatabase);
       } catch (err: any) {
-        setFetchError(err.message || 'Error loading registration records');
+        setFetchError(err.message || 'Unable to load registered students.');
       } finally {
         setIsLoadingData(false);
       }
@@ -220,8 +222,6 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     setStats(null);
     setSelectedStudent(null);
   };
-
-  const [isClearing, setIsClearing] = useState(false);
 
   const handleExportCSV = () => {
     if (!token) return;
@@ -860,16 +860,45 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
             {fetchError && (
               <div
                 style={{
-                  padding: '12px 16px',
-                  borderRadius: '10px',
+                  padding: '12px 18px',
+                  borderRadius: '12px',
                   background: 'rgba(244, 63, 94, 0.12)',
                   border: '1px solid rgba(244, 63, 94, 0.3)',
                   color: '#f87171',
                   marginBottom: '16px',
-                  fontSize: '0.85rem'
+                  fontSize: '0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '12px'
                 }}
               >
-                {fetchError}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <AlertCircle size={16} />
+                  <span>{fetchError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => token && fetchRegistrations(token)}
+                  disabled={isLoadingData}
+                  style={{
+                    padding: '6px 14px',
+                    borderRadius: '8px',
+                    background: 'rgba(244, 63, 94, 0.2)',
+                    border: '1px solid rgba(244, 63, 94, 0.4)',
+                    color: '#fff',
+                    fontSize: '0.8rem',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <RotateCw size={13} className={isLoadingData ? 'spin' : ''} />
+                  Retry
+                </button>
               </div>
             )}
 
@@ -915,9 +944,42 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                   <tbody>
                     {registrations.length === 0 ? (
                       <tr>
-                        <td colSpan={8} style={{ padding: '40px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                        <td colSpan={8} style={{ padding: '48px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>
                           {isLoadingData ? (
-                            'Fetching institutional registrations...'
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                              <RotateCw size={26} className="spin" style={{ color: 'var(--accent-cyan)' }} />
+                              <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                                Fetching institutional registrations...
+                              </span>
+                            </div>
+                          ) : fetchError ? (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                              <AlertCircle size={32} style={{ color: '#f87171' }} />
+                              <p style={{ color: '#f87171', fontWeight: 600, fontSize: '0.95rem' }}>Unable to load registered students.</p>
+                              <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', maxWidth: '400px' }}>{fetchError}</p>
+                              <button
+                                type="button"
+                                onClick={() => token && fetchRegistrations(token)}
+                                style={{
+                                  marginTop: '6px',
+                                  padding: '8px 20px',
+                                  borderRadius: '8px',
+                                  background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+                                  border: 'none',
+                                  color: '#030816',
+                                  fontWeight: 700,
+                                  fontSize: '0.84rem',
+                                  cursor: 'pointer',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  boxShadow: '0 4px 14px rgba(0, 242, 254, 0.3)'
+                                }}
+                              >
+                                <RotateCw size={14} />
+                                Retry
+                              </button>
+                            </div>
                           ) : (
                             <div>
                               <FileSpreadsheet size={32} style={{ margin: '0 auto 10px', opacity: 0.4 }} />

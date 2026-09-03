@@ -20,10 +20,22 @@ const GENERIC_ERROR = 'Unable to connect to the Quiz Club service. Please try ag
 
 export async function safeApiRequest<T = any>(
   url: string,
-  options?: RequestInit
+  options?: RequestInit,
+  timeoutMs: number = 15000
 ): Promise<ApiResponse<T>> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => {
+    controller.abort();
+  }, timeoutMs);
+
   try {
-    const response = await fetch(url, options);
+    const combinedOptions: RequestInit = {
+      ...options,
+      signal: options?.signal || controller.signal
+    };
+
+    const response = await fetch(url, combinedOptions);
+    clearTimeout(timer);
 
     // Check Content-Type header
     const contentType = response.headers.get('content-type') || '';
@@ -69,6 +81,15 @@ export async function safeApiRequest<T = any>(
       };
     }
   } catch (networkErr: any) {
+    clearTimeout(timer);
+    if (networkErr?.name === 'AbortError') {
+      return {
+        ok: false,
+        status: 408,
+        data: null,
+        error: 'Request timed out. Please check your connection and retry.'
+      };
+    }
     // Network failure, CORS blocked, DNS resolution failed, etc.
     console.error(`[API] Network error for ${url}:`, networkErr);
     return {
@@ -79,3 +100,4 @@ export async function safeApiRequest<T = any>(
     };
   }
 }
+
