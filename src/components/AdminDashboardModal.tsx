@@ -95,9 +95,55 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
           return;
         }
 
-        const data = await res.json();
-        if (!res.ok || !data.success) {
-          throw new Error(data.message || 'Failed to fetch registrations');
+        let data: any = null;
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          data = await res.json();
+        } else {
+          const rawText = await res.text();
+          try {
+            data = JSON.parse(rawText);
+          } catch {
+            data = null;
+          }
+        }
+
+        if (!res.ok || !data?.success) {
+          // If server offline / static host, fallback to local storage
+          const localRecords = JSON.parse(localStorage.getItem('sqc_local_registrations') || '[]');
+          if (localRecords.length > 0 || authToken.startsWith('sqc_offline_')) {
+            const filtered = localRecords.filter((r: any) => {
+              if (selectedBranch && r.branch !== selectedBranch) return false;
+              if (selectedSubject && r.interested_subject !== selectedSubject) return false;
+              if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                return (
+                  r.name?.toLowerCase().includes(q) ||
+                  r.sic_no?.toLowerCase().includes(q) ||
+                  r.ref_id?.toLowerCase().includes(q)
+                );
+              }
+              return true;
+            });
+
+            setRegistrations(filtered);
+            const branchCounts: Record<string, number> = {};
+            const subjectCounts: Record<string, number> = {};
+            localRecords.forEach((r: any) => {
+              if (r.branch) branchCounts[r.branch] = (branchCounts[r.branch] || 0) + 1;
+              if (r.interested_subject) subjectCounts[r.interested_subject] = (subjectCounts[r.interested_subject] || 0) + 1;
+            });
+
+            setStats({
+              total: localRecords.length,
+              todayCount: localRecords.length,
+              branchCounts,
+              subjectCounts,
+              recentCount: localRecords.length
+            });
+            return;
+          }
+          throw new Error(data?.message || 'Failed to fetch registrations from server.');
         }
 
         setRegistrations(data.registrations || []);
@@ -133,15 +179,48 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     sound.playClick();
 
     try {
-      const res = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ passkey: passkey.trim() })
-      });
+      let data: any = null;
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ passkey: passkey.trim() })
+        });
 
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || 'Invalid administrator passkey.');
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          data = await res.json();
+        } else {
+          const rawText = await res.text();
+          try {
+            data = JSON.parse(rawText);
+          } catch {
+            data = null;
+          }
+        }
+
+        if (data && (!res.ok || !data.success)) {
+          throw new Error(data.message || 'Invalid administrator passkey.');
+        }
+      } catch (fetchErr: any) {
+        if (data && !data.success) throw fetchErr;
+        // Network / 404 / static host fallback
+        console.warn('[Admin Login] Server API unreachable, checking offline master passkey');
+      }
+
+      // If server API was offline or static host (e.g. GitHub Pages)
+      if (!data || !data.success) {
+        if (passkey.trim() === 'Silicon@Quiz2026') {
+          const offlineToken = `sqc_offline_${Date.now()}`;
+          sound.playSuccessCelebration();
+          setToken(offlineToken);
+          sessionStorage.setItem('sqc_admin_token', offlineToken);
+          setPasskey('');
+          fetchRegistrations(offlineToken);
+          return;
+        } else {
+          throw new Error('Invalid administrator passkey.');
+        }
       }
 
       sound.playSuccessCelebration();
