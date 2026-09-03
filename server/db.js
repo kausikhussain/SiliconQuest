@@ -286,6 +286,8 @@ export async function saveRegistration(data) {
          ON CONFLICT (ref_id) DO NOTHING`,
         [record.ref_id, record.name, record.sic_no, record.branch, record.tenth_percentage, record.twelfth_percentage, record.interested_subject, record.declaration_accepted, record.created_at]
       );
+      // Database commit confirmed: broadcast real-time event
+      recordNewEvent(record);
       return { refId: record.ref_id, timestamp: record.created_at, isExisting: false };
     } catch (err) {
       console.error('[DB] PostgreSQL insert failed:', err.message);
@@ -309,6 +311,9 @@ export async function saveRegistration(data) {
   const currentList = readJsonBackup();
   currentList.unshift(record);
   writeJsonBackup(currentList);
+
+  // Database commit confirmed: broadcast real-time event
+  recordNewEvent(record);
 
   return { refId: record.ref_id, timestamp: record.created_at, isExisting: false };
 }
@@ -512,4 +517,123 @@ function generateAdminToken() {
     .update(`${payload}.${expiry}`)
     .digest('hex');
   return `${payload}.${expiry}.${signature}`;
+}
+
+// ─── Real-Time Ingestion & Event Ring Buffer ────────────────────────
+const MAX_EVENT_BUFFER = 200;
+const recentRegistrationEvents = [];
+const sseSubscribers = new Set();
+
+export function recordNewEvent(record) {
+  const eventItem = {
+    id: record.ref_id,
+    type: 'registration_created',
+    timestamp: record.created_at || new Date().toISOString(),
+    record: { ...record }
+  };
+
+  recentRegistrationEvents.unshift(eventItem);
+  if (recentRegistrationEvents.length > MAX_EVENT_BUFFER) {
+    recentRegistrationEvents.pop();
+  }
+
+  // Broadcast to all active SSE subscriber response streams
+  broadcastSseEvent('registration', {
+    type: 'new_registration',
+    record: eventItem.record,
+    timestamp: eventItem.timestamp
+  });
+
+  return eventItem;
+}
+
+export function broadcastSseEvent(eventType, payload) {
+  const message = `event: ${eventType}\ndata: ${JSON.stringify(payload)}\n\n`;
+  for (const client of sseSubscribers) {
+    try {
+      client.write(message);
+    } catch {
+      sseSubscribers.delete(client);
+    }
+  }
+}
+
+export function addSseSubscriber(res) {
+  sseSubscribers.add(res);
+}
+
+export function removeSseSubscriber(res) {
+  sseSubscribers.delete(res);
+}
+
+export async function getEventsSince(sinceTimestamp) {
+  await ensureDbReady();
+
+  // If timestamp provided, use it; otherwise return last 50
+  if (sinceTimestamp) {
+    const sinceDate = new Date(sinceTimestamp);
+    if (!isNaN(sinceDate.getTime())) {
+      const isoStr = sinceDate.toISOString();
+
+      // Query authoritative PostgreSQL if available
+      if (pgReady && pgPool) {
+        try {
+          const res = await pgPool.query(
+            'SELECT * FROM registrations WHERE created_at > $1 ORDER BY created_at ASC LIMIT 100',
+            [isoStr]
+          );
+          if (res.rows.length > 0) {
+            return res.rows.map(r => ({
+              id: r.ref_id,
+              type: 'registration_created',
+              timestamp: r.created_at,
+              record: r
+            }));
+          }
+        } catch (e) {
+          console.error('[DB] getEventsSince PG error:', e.message);
+        }
+      }
+
+      // Query authoritative SQLite if available
+      if (sqliteDb) {
+        try {
+          const rows = sqliteDb
+            .prepare('SELECT * FROM registrations WHERE created_at > ? ORDER BY created_at ASC LIMIT 100')
+            .all(isoStr);
+          if (rows && rows.length > 0) {
+            return rows.map(r => ({
+              id: r.ref_id,
+              type: 'registration_created',
+              timestamp: r.created_at,
+              record: r
+            }));
+          }
+        } catch (e) {
+          console.error('[DB] getEventsSince SQLite error:', e.message);
+        }
+      }
+
+      // In-memory buffer filter
+      const inMemoryFiltered = recentRegistrationEvents.filter(
+        ev => new Date(ev.timestamp).getTime() > sinceDate.getTime()
+      );
+      if (inMemoryFiltered.length > 0) {
+        return inMemoryFiltered;
+      }
+    }
+  }
+
+  // Fallback to in-memory events or recent records from DB
+  if (recentRegistrationEvents.length > 0) {
+    return recentRegistrationEvents.slice(0, 50);
+  }
+
+  const latest = await getRegistrations({ sort: 'date' });
+  return latest.slice(0, 50).map(r => ({
+    id: r.ref_id,
+    type: 'registration_created',
+    timestamp: r.created_at,
+    record: r
+  }));
 }

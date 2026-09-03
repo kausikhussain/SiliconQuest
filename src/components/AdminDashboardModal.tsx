@@ -17,34 +17,15 @@ import {
   CheckCircle2,
   Copy,
   Check,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Radio
 } from 'lucide-react';
 import { sound } from '../utils/soundEngine';
+import { useAdminRealtime, StudentRegistration, StatsData } from '../hooks/useAdminRealtime';
 
 interface AdminDashboardModalProps {
   isOpen: boolean;
   onClose: () => void;
-}
-
-interface StudentRegistration {
-  id: number;
-  ref_id: string;
-  name: string;
-  sic_no: string;
-  branch: string;
-  tenth_percentage: number;
-  twelfth_percentage: number;
-  interested_subject: string;
-  declaration_accepted: number;
-  created_at: string;
-}
-
-interface StatsData {
-  total: number;
-  todayCount: number;
-  branchCounts: Record<string, number>;
-  subjectCounts: Record<string, number>;
-  recentCount: number;
 }
 
 export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen, onClose }) => {
@@ -74,6 +55,10 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   // Selected student for detailed dossier inspection
   const [selectedStudent, setSelectedStudent] = useState<StudentRegistration | null>(null);
   const [isRefCopied, setIsRefCopied] = useState(false);
+
+  // Real-time notification & visual highlighting
+  const [highlightedRefId, setHighlightedRefId] = useState<string | null>(null);
+  const [realtimeToast, setRealtimeToast] = useState<{ message: string; timestamp: number } | null>(null);
 
   const fetchRegistrations = useCallback(
     async (authToken: string) => {
@@ -115,6 +100,61 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
     },
     [searchQuery, selectedBranch, selectedSubject, selectedSort]
   );
+
+  // Real-time Event Ingestion Handlers
+  const handleNewRealtimeRegistration = useCallback((newReg: StudentRegistration) => {
+    setRegistrations((prev) => {
+      // Deduplicate: prevent duplicate student cards by server-generated ref_id
+      if (prev.some((r) => r.ref_id === newReg.ref_id)) {
+        return prev;
+      }
+      sound.playCorrect();
+      setHighlightedRefId(newReg.ref_id);
+      setTimeout(() => setHighlightedRefId(null), 4000);
+
+      setRealtimeToast({
+        message: `New student registration: ${newReg.name} (${newReg.sic_no})`,
+        timestamp: Date.now()
+      });
+      setTimeout(() => setRealtimeToast(null), 4500);
+
+      // Prepend without resetting user's search query, branch filter, or scroll position
+      return [newReg, ...prev];
+    });
+
+    setStats((prev) => {
+      if (!prev) return null;
+      const b = newReg.branch || 'Other';
+      const prevCount = prev.branchCounts[b] || 0;
+      return {
+        ...prev,
+        total: prev.total + 1,
+        todayCount: prev.todayCount + 1,
+        branchCounts: {
+          ...prev.branchCounts,
+          [b]: prevCount + 1
+        }
+      };
+    });
+  }, []);
+
+  const handleStatsUpdate = useCallback((newStats: StatsData) => {
+    setStats(newStats);
+  }, []);
+
+  const handleReconcileRequired = useCallback(async () => {
+    if (token) {
+      await fetchRegistrations(token);
+    }
+  }, [token, fetchRegistrations]);
+
+  const { status: realtimeStatus } = useAdminRealtime({
+    token,
+    enabled: isOpen && !!token,
+    onNewRegistration: handleNewRealtimeRegistration,
+    onStatsUpdate: handleStatsUpdate,
+    onReconcileRequired: handleReconcileRequired
+  });
 
   // Auto-fetch data whenever filters change or when modal is opened and token is valid
   useEffect(() => {
@@ -419,6 +459,45 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
              VIEW 2: FULL ADMIN MANAGEMENT CONSOLE
              ======================================================================= */
           <div>
+            {/* Floating Real-time Registration Notification Toast */}
+            {realtimeToast && (
+              <div
+                style={{
+                  position: 'sticky',
+                  top: '0px',
+                  zIndex: 100,
+                  marginBottom: '16px',
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(0, 242, 254, 0.15))',
+                  border: '1px solid rgba(0, 242, 254, 0.5)',
+                  borderRadius: '12px',
+                  padding: '10px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  boxShadow: '0 8px 24px rgba(0, 242, 254, 0.2)',
+                  backdropFilter: 'blur(10px)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00f2fe', boxShadow: '0 0 10px #00f2fe', flexShrink: 0 }} />
+                  <div>
+                    <div className="font-mono" style={{ fontSize: '0.68rem', color: 'var(--accent-cyan)', letterSpacing: '0.08em', fontWeight: 700 }}>
+                      ⚡ LIVE REAL-TIME INGESTION
+                    </div>
+                    <div style={{ fontSize: '0.84rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                      {realtimeToast.message}
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setRealtimeToast(null)}
+                  style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
+
             {/* Top Bar */}
             <div
               style={{
@@ -531,11 +610,19 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                 <div className="font-display" style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   {stats ? stats.total : registrations.length}
                 </div>
-                <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}>
-                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: isCloudDb ? '#10b981' : '#f59e0b', display: 'inline-block' }} />
-                  <span style={{ color: isCloudDb ? '#10b981' : 'var(--text-muted)' }}>
-                    {dbStatus || (isCloudDb ? 'PostgreSQL Cloud Connected' : 'Serverless Storage')}
-                  </span>
+                <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: isCloudDb ? '#10b981' : '#f59e0b', display: 'inline-block' }} />
+                    <span style={{ color: isCloudDb ? '#10b981' : 'var(--text-muted)' }}>
+                      {dbStatus || (isCloudDb ? 'PostgreSQL Cloud' : 'Serverless Storage')}
+                    </span>
+                  </div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', padding: '2px 6px', borderRadius: '6px', background: realtimeStatus === 'connected' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)' }}>
+                    <Radio size={11} color={realtimeStatus === 'connected' ? '#10b981' : (realtimeStatus === 'offline' ? '#ef4444' : '#f59e0b')} />
+                    <span style={{ color: realtimeStatus === 'connected' ? '#10b981' : (realtimeStatus === 'offline' ? '#ef4444' : '#f59e0b'), fontWeight: 600 }}>
+                      {realtimeStatus === 'connected' ? 'REALTIME LIVE' : (realtimeStatus === 'offline' ? 'OFFLINE' : 'SYNCING...')}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -789,15 +876,18 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                     ) : (
                       registrations.map((student) => {
                         const badge = getBranchBadgeStyle(student.branch);
+                        const isHighlighted = student.ref_id === highlightedRefId;
                         return (
                           <tr
                             key={student.ref_id}
                             style={{
                               borderBottom: '1px solid rgba(255, 255, 255, 0.04)',
-                              transition: 'background-color 0.15s ease'
+                              backgroundColor: isHighlighted ? 'rgba(0, 242, 254, 0.12)' : 'transparent',
+                              boxShadow: isHighlighted ? 'inset 0 0 16px rgba(0, 242, 254, 0.3)' : 'none',
+                              transition: 'background-color 0.4s ease, box-shadow 0.4s ease'
                             }}
-                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)')}
-                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
+                            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = isHighlighted ? 'rgba(0, 242, 254, 0.16)' : 'rgba(255, 255, 255, 0.03)')}
+                            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = isHighlighted ? 'rgba(0, 242, 254, 0.12)' : 'transparent')}
                           >
                             <td style={{ padding: '12px 16px' }}>
                               <code

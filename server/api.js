@@ -9,7 +9,10 @@ import {
   sanitizeText,
   ensureDbReady,
   isPostgresReady,
-  hasDbConnectionUrl
+  hasDbConnectionUrl,
+  addSseSubscriber,
+  removeSseSubscriber,
+  getEventsSince
 } from './db.js';
 
 // Helper to read request body as JSON (handles both stream and pre-parsed)
@@ -301,6 +304,92 @@ export async function handleApiRequest(req, res) {
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.end(csvContent);
+    return true;
+  }
+
+  // 7. GET /api/admin/events (PROTECTED REAL-TIME STREAM & DELTA SYNC)
+  if (pathname === '/api/admin/events' && req.method === 'GET') {
+    const token = getBearerToken(req) || parsedUrl.searchParams.get('token');
+    if (!verifyAdminToken(token)) {
+      sendJson(res, 401, { success: false, message: 'Unauthorized: Admin passkey required' });
+      return true;
+    }
+
+    const accept = req.headers?.accept || '';
+    const wantsStream = accept.includes('text/event-stream') || parsedUrl.searchParams.get('stream') === 'true';
+
+    // A. Server-Sent Events (SSE) streaming mode
+    if (wantsStream) {
+      const headers = {
+        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        'Connection': 'keep-alive',
+        'X-Accel-Buffering': 'no',
+        'Access-Control-Allow-Origin': '*'
+      };
+
+      if (typeof res.writeHead === 'function') {
+        res.writeHead(200, headers);
+      } else if (typeof res.setHeader === 'function') {
+        Object.entries(headers).forEach(([k, v]) => res.setHeader(k, v));
+        res.statusCode = 200;
+      }
+
+      if (typeof res.flushHeaders === 'function') {
+        res.flushHeaders();
+      }
+
+      // Send initial connected payload
+      const initialServerTime = new Date().toISOString();
+      res.write(`event: connected\ndata: ${JSON.stringify({ type: 'connected', serverTime: initialServerTime })}\n\n`);
+
+      // Check if client asked for events missed since a timestamp
+      const sinceParam = parsedUrl.searchParams.get('since');
+      if (sinceParam) {
+        getEventsSince(sinceParam).then((missedEvents) => {
+          for (const ev of missedEvents) {
+            try {
+              res.write(`event: registration\ndata: ${JSON.stringify({ type: 'new_registration', record: ev.record, timestamp: ev.timestamp })}\n\n`);
+            } catch {
+              break;
+            }
+          }
+        }).catch(console.error);
+      }
+
+      addSseSubscriber(res);
+
+      // Periodic heartbeat keep-alive (every 5 seconds)
+      const keepAliveTimer = setInterval(() => {
+        try {
+          res.write(': keepalive\n\n');
+        } catch {
+          clearInterval(keepAliveTimer);
+          removeSseSubscriber(res);
+        }
+      }, 5000);
+
+      const cleanup = () => {
+        clearInterval(keepAliveTimer);
+        removeSseSubscriber(res);
+      };
+
+      req.on('close', cleanup);
+      res.on('close', cleanup);
+      return true;
+    }
+
+    // B. Fast Delta Sync JSON mode (used for reconnection & adaptive catch-up)
+    const since = parsedUrl.searchParams.get('since');
+    const events = await getEventsSince(since);
+    const stats = await getStats();
+
+    sendJson(res, 200, {
+      success: true,
+      events,
+      stats,
+      serverTime: new Date().toISOString()
+    });
     return true;
   }
 
