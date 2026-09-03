@@ -172,9 +172,21 @@ export async function handleApiRequest(req, res) {
         declarationAccepted: true
       });
 
+      if (result.isExisting) {
+        sendJson(res, 200, {
+          success: true,
+          refId: result.refId,
+          alreadyRegistered: true,
+          message: 'Your registration has already been recorded for Silicon Institute of Technology Quiz Club.',
+          timestamp: result.timestamp
+        });
+        return true;
+      }
+
       sendJson(res, 201, {
         success: true,
         refId: result.refId,
+        alreadyRegistered: false,
         message: 'Registration successfully submitted to Silicon Institute of Technology Quiz Club.',
         timestamp: result.timestamp
       });
@@ -225,8 +237,9 @@ export async function handleApiRequest(req, res) {
     const search = parsedUrl.searchParams.get('search') || '';
     const branch = parsedUrl.searchParams.get('branch') || '';
     const subject = parsedUrl.searchParams.get('subject') || '';
+    const sort = parsedUrl.searchParams.get('sort') || 'date';
 
-    const records = await getRegistrations({ search, branch, subject });
+    const records = await getRegistrations({ search, branch, subject, sort });
     const stats = await getStats();
 
     sendJson(res, 200, {

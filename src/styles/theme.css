@@ -256,10 +256,12 @@ input:-webkit-autofill:active {
   align-items: center;
   gap: 10px;
   padding: 11px 14px;
-  border-radius: 10px;
+  min-height: 48px;
+  border-radius: 12px;
   background-color: var(--input-bg);
   border: 1px solid var(--input-border);
   transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .form-input-container:hover {
@@ -281,7 +283,7 @@ input:-webkit-autofill:active {
   box-shadow: var(--input-error-focus-ring) !important;
 }
 
-/* Clean Input Field */
+/* Clean Input Field - 16px prevents iOS Safari auto-zoom */
 .form-text-input {
   width: 100%;
   background: transparent !important;
@@ -289,15 +291,18 @@ input:-webkit-autofill:active {
   outline: none !important;
   color: var(--input-text) !important;
   font-family: var(--font-sans);
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.4;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .form-text-input.font-mono {
   font-family: var(--font-mono) !important;
+  font-size: 15px;
 }
 
-/* Select Dropdown Element */
+/* Select Dropdown Element - 16px prevents iOS Safari auto-zoom */
 .form-select-element {
   width: 100%;
   background: transparent !important;
@@ -305,14 +310,67 @@ input:-webkit-autofill:active {
   outline: none !important;
   color: var(--input-text) !important;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 16px;
+  min-height: 26px;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .form-select-element option {
   background-color: var(--form-select-option-bg);
   color: var(--form-select-option-text);
-  padding: 8px 12px;
+  padding: 10px 14px;
+}
+
+/* Mobile Responsive Modal Container */
+.reg-modal-container {
+  width: 100%;
+  max-width: 680px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  border-radius: 24px;
+  padding: clamp(18px, 4.5vw, 32px) clamp(14px, 4vw, 24px);
+  position: relative;
+  background-color: var(--form-card-bg);
+  border: 1px solid var(--form-card-border);
+  box-shadow: var(--shadow-elevated);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 480px) {
+  .reg-modal-container {
+    border-radius: 18px;
+    padding: 20px 14px;
+    max-height: 94dvh;
+  }
+}
+
+/* Touch-Friendly Checkbox Wrapper */
+.form-checkbox-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--form-section-bg);
+  border: 1px solid var(--form-section-border);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+  min-height: 48px;
+}
+
+.form-checkbox-wrapper:hover {
+  border-color: var(--accent-cyan);
+}
+
+.form-checkbox-wrapper.checked {
+  border-color: rgba(0, 242, 254, 0.5);
+  background: rgba(0, 242, 254, 0.05);
 }
 
 /* Background Atmosphere Grids & Radial Glow */

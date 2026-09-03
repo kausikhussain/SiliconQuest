@@ -32,6 +32,7 @@ let pgReady = false;
 const DB_CONN_URL =
   process.env.DATABASE_URL ||
   process.env.POSTGRES_URL ||
+  process.env.STORAGE_POSTGRES_URL ||
   process.env.STORAGE_URL ||
   process.env.STORAGE_DATABASE_URL ||
   process.env.POSTGRES_PRISMA_URL ||
@@ -44,7 +45,7 @@ async function initPostgres() {
     pgPool = new pg.Pool({
       connectionString: DB_CONN_URL,
       ssl: DB_CONN_URL.includes('localhost') ? false : { rejectUnauthorized: false },
-      max: 5,
+      max: 20, // Tuned for 50 concurrent students
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 5000
     });
@@ -65,8 +66,9 @@ async function initPostgres() {
       )
     `);
 
-    // Create indexes
+    // Create indexes and unique constraint
     await pgPool.query('CREATE INDEX IF NOT EXISTS idx_reg_sic ON registrations(sic_no)');
+    await pgPool.query('CREATE UNIQUE INDEX IF NOT EXISTS idx_reg_sic_unique ON registrations(LOWER(sic_no))');
     await pgPool.query('CREATE INDEX IF NOT EXISTS idx_reg_branch ON registrations(branch)');
     await pgPool.query('CREATE INDEX IF NOT EXISTS idx_reg_created ON registrations(created_at)');
 
@@ -116,6 +118,7 @@ async function initSqlite() {
         created_at TEXT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS idx_reg_sic ON registrations(sic_no);
+      CREATE UNIQUE INDEX IF NOT EXISTS idx_reg_sic_unique ON registrations(LOWER(sic_no));
       CREATE INDEX IF NOT EXISTS idx_reg_branch ON registrations(branch);
       CREATE INDEX IF NOT EXISTS idx_reg_created ON registrations(created_at);
     `);
@@ -207,8 +210,50 @@ export function sanitizeText(val) {
 
 // ─── Registration CRUD ──────────────────────────────────────────────
 
+export async function findRegistrationBySic(sicNo) {
+  await ensureDbReady();
+  if (!sicNo) return null;
+  const cleanSic = sanitizeText(sicNo).toUpperCase();
+
+  // PostgreSQL
+  if (pgReady && pgPool) {
+    try {
+      const res = await pgPool.query('SELECT * FROM registrations WHERE LOWER(sic_no) = LOWER($1) LIMIT 1', [cleanSic]);
+      if (res.rows.length > 0) return res.rows[0];
+    } catch (e) {
+      console.error('[DB] findRegistrationBySic PG error:', e.message);
+    }
+  }
+
+  // SQLite
+  if (sqliteDb) {
+    try {
+      const row = sqliteDb.prepare('SELECT * FROM registrations WHERE LOWER(sic_no) = LOWER(?) LIMIT 1').get(cleanSic);
+      if (row) return row;
+    } catch (e) {
+      console.error('[DB] findRegistrationBySic SQLite error:', e.message);
+    }
+  }
+
+  // JSON fallback
+  const list = readJsonBackup();
+  return list.find((r) => r.sic_no && r.sic_no.toLowerCase() === cleanSic.toLowerCase()) || null;
+}
+
 export async function saveRegistration(data) {
   await ensureDbReady();
+
+  const cleanSic = sanitizeText(data.sicNo).toUpperCase();
+
+  // Idempotency check: if student already registered, return existing record
+  const existing = await findRegistrationBySic(cleanSic);
+  if (existing) {
+    return {
+      refId: existing.ref_id,
+      timestamp: existing.created_at,
+      isExisting: true
+    };
+  }
 
   const refId = generateReferenceId();
   const timestamp = new Date().toISOString();
@@ -216,7 +261,7 @@ export async function saveRegistration(data) {
   const record = {
     ref_id: refId,
     name: sanitizeText(data.name),
-    sic_no: sanitizeText(data.sicNo).toUpperCase(),
+    sic_no: cleanSic,
     branch: sanitizeText(data.branch),
     tenth_percentage: parseFloat(Number(data.tenthPercentage).toFixed(2)),
     twelfth_percentage: parseFloat(Number(data.twelfthPercentage).toFixed(2)),
@@ -230,10 +275,11 @@ export async function saveRegistration(data) {
     try {
       await pgPool.query(
         `INSERT INTO registrations (ref_id, name, sic_no, branch, tenth_percentage, twelfth_percentage, interested_subject, declaration_accepted, created_at)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         ON CONFLICT (ref_id) DO NOTHING`,
         [record.ref_id, record.name, record.sic_no, record.branch, record.tenth_percentage, record.twelfth_percentage, record.interested_subject, record.declaration_accepted, record.created_at]
       );
-      return { refId: record.ref_id, timestamp: record.created_at };
+      return { refId: record.ref_id, timestamp: record.created_at, isExisting: false };
     } catch (err) {
       console.error('[DB] PostgreSQL insert failed:', err.message);
     }
@@ -257,15 +303,23 @@ export async function saveRegistration(data) {
   currentList.unshift(record);
   writeJsonBackup(currentList);
 
-  return { refId: record.ref_id, timestamp: record.created_at };
+  return { refId: record.ref_id, timestamp: record.created_at, isExisting: false };
 }
 
-export async function getRegistrations({ search = '', branch = '', subject = '' } = {}) {
+export async function getRegistrations({ search = '', branch = '', subject = '', sort = 'date' } = {}) {
   await ensureDbReady();
 
   const s = sanitizeText(search).toLowerCase();
   const b = sanitizeText(branch);
   const sub = sanitizeText(subject);
+
+  // Sorting SQL clause
+  let orderClause = ' ORDER BY id DESC';
+  if (sort === 'percentage' || sort === 'marks') {
+    orderClause = ' ORDER BY twelfth_percentage DESC, tenth_percentage DESC';
+  } else if (sort === 'name') {
+    orderClause = ' ORDER BY LOWER(name) ASC';
+  }
 
   // PostgreSQL
   if (pgReady && pgPool) {
@@ -287,7 +341,7 @@ export async function getRegistrations({ search = '', branch = '', subject = '' 
         params.push(`%${s}%`, `%${s}%`, `%${s}%`);
         paramIdx += 3;
       }
-      sql += ' ORDER BY id DESC';
+      sql += orderClause;
 
       const result = await pgPool.query(sql, params);
       return result.rows;
@@ -313,7 +367,7 @@ export async function getRegistrations({ search = '', branch = '', subject = '' 
       sql += ' AND (LOWER(name) LIKE ? OR LOWER(sic_no) LIKE ? OR LOWER(ref_id) LIKE ?)';
       params.push(`%${s}%`, `%${s}%`, `%${s}%`);
     }
-    sql += ' ORDER BY id DESC';
+    sql += orderClause;
 
     const stmt = sqliteDb.prepare(sql);
     return stmt.all(...params);
@@ -335,6 +389,17 @@ export async function getRegistrations({ search = '', branch = '', subject = '' 
         r.ref_id.toLowerCase().includes(s)
     );
   }
+
+  // Sort JSON fallback
+  if (sort === 'percentage' || sort === 'marks') {
+    list.sort((x, y) => (y.twelfth_percentage || 0) - (x.twelfth_percentage || 0));
+  } else if (sort === 'name') {
+    list.sort((x, y) => (x.name || '').localeCompare(y.name || ''));
+  } else {
+    // default date desc
+    list.sort((x, y) => (y.id || 0) - (x.id || 0));
+  }
+
   return list;
 }
 

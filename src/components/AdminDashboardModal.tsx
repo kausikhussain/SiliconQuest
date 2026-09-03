@@ -67,6 +67,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBranch, setSelectedBranch] = useState('ALL');
   const [selectedSubject, setSelectedSubject] = useState('ALL');
+  const [selectedSort, setSelectedSort] = useState<'date' | 'percentage' | 'name'>('date');
 
   // Selected student for detailed dossier inspection
   const [selectedStudent, setSelectedStudent] = useState<StudentRegistration | null>(null);
@@ -81,6 +82,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
         if (searchQuery.trim()) queryParams.set('search', searchQuery.trim());
         if (selectedBranch !== 'ALL') queryParams.set('branch', selectedBranch);
         if (selectedSubject !== 'ALL') queryParams.set('subject', selectedSubject);
+        if (selectedSort) queryParams.set('sort', selectedSort);
 
         const apiResult = await safeApiRequest(`/api/admin/registrations?${queryParams.toString()}`, {
           headers: {
@@ -107,7 +109,7 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
         setIsLoadingData(false);
       }
     },
-    [searchQuery, selectedBranch, selectedSubject]
+    [searchQuery, selectedBranch, selectedSubject, selectedSort]
   );
 
   // Auto-fetch data whenever filters change or when modal is opened and token is valid
@@ -675,6 +677,31 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                   <option value="Chemistry" style={{ background: 'var(--form-select-option-bg)', color: 'var(--form-select-option-text)' }}>Chemistry</option>
                   <option value="Mathematics" style={{ background: 'var(--form-select-option-bg)', color: 'var(--form-select-option-text)' }}>Mathematics</option>
                   <option value="Other" style={{ background: 'var(--form-select-option-bg)', color: 'var(--form-select-option-text)' }}>Other</option>
+                </select>
+              </div>
+
+              {/* Sort Filter */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  SORT:
+                </span>
+                <select
+                  value={selectedSort}
+                  onChange={(e) => setSelectedSort(e.target.value as any)}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    background: 'var(--form-select-bg)',
+                    border: '1px solid var(--input-border)',
+                    color: 'var(--form-select-option-text)',
+                    fontSize: '13px',
+                    outline: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="date" style={{ background: 'var(--form-select-option-bg)', color: 'var(--form-select-option-text)' }}>Newest First</option>
+                  <option value="percentage" style={{ background: 'var(--form-select-option-bg)', color: 'var(--form-select-option-text)' }}>Highest Marks</option>
+                  <option value="name" style={{ background: 'var(--form-select-option-bg)', color: 'var(--form-select-option-text)' }}>Name (A-Z)</option>
                 </select>
               </div>
             </div>

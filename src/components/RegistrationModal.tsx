@@ -191,15 +191,18 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
     sound.playClick();
 
     try {
+      const cleanTenth = parseFloat(String(formData.tenthPercentage).replace(/%/g, '').trim());
+      const cleanTwelfth = parseFloat(String(formData.twelfthPercentage).replace(/%/g, '').trim());
+
       const apiResult = await safeApiRequest('/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.name,
-          sicNo: formData.sicNo,
+          name: formData.name.trim(),
+          sicNo: formData.sicNo.trim().toUpperCase(),
           branch: formData.branch,
-          tenthPercentage: parseFloat(String(formData.tenthPercentage).replace(/%/g, '').trim()),
-          twelfthPercentage: parseFloat(String(formData.twelfthPercentage).replace(/%/g, '').trim()),
+          tenthPercentage: cleanTenth,
+          twelfthPercentage: cleanTwelfth,
           interestedSubject: formData.interestedSubject,
           otherSubject: formData.otherSubject,
           declarationAccepted: formData.declarationAccepted
@@ -443,6 +446,9 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
                         <input
                           id="reg-full-name"
                           type="text"
+                          inputMode="text"
+                          autoComplete="name"
+                          autoCapitalize="words"
                           required
                           placeholder="Full Name (e.g. Kausik Hussain)"
                           value={formData.name}
@@ -472,10 +478,14 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
                           <input
                             id="reg-sic-no"
                             type="text"
+                            inputMode="text"
+                            autoCapitalize="characters"
+                            autoComplete="off"
+                            spellCheck={false}
                             required
-                            placeholder="Student ID / SIC No."
+                            placeholder="e.g. 23BCSN99"
                             value={formData.sicNo}
-                            onChange={(e) => handleChange('sicNo', e.target.value)}
+                            onChange={(e) => handleChange('sicNo', e.target.value.toUpperCase())}
                             onBlur={() => handleBlur('sicNo')}
                             className="form-text-input font-mono"
                           />
@@ -560,10 +570,8 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
                         <Percent size={15} color="var(--text-muted)" style={{ flexShrink: 0 }} />
                         <input
                           id="reg-tenth-result"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="100"
+                          type="text"
+                          inputMode="decimal"
                           required
                           placeholder="e.g. 92.50"
                           value={formData.tenthPercentage}
@@ -590,10 +598,8 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
                         <Percent size={15} color="var(--text-muted)" style={{ flexShrink: 0 }} />
                         <input
                           id="reg-twelfth-result"
-                          type="number"
-                          step="0.01"
-                          min="0"
-                          max="100"
+                          type="text"
+                          inputMode="decimal"
                           required
                           placeholder="e.g. 89.40"
                           value={formData.twelfthPercentage}
@@ -706,80 +712,97 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
 
                 {/* 4. Mandatory Institutional Declaration */}
                 <div
+                  className={`form-checkbox-wrapper ${formData.declarationAccepted ? 'checked' : ''}`}
                   style={{
-                    background: 'var(--form-declaration-bg)',
-                    border: `1px solid ${errors.declarationAccepted && touched.declarationAccepted ? 'var(--input-error-border)' : 'var(--form-declaration-border)'}`,
-                    borderRadius: '16px',
-                    padding: '16px',
-                    transition: 'border-color 0.2s ease, background-color 0.2s ease'
+                    borderColor: errors.declarationAccepted && touched.declarationAccepted ? 'var(--input-error-border)' : undefined
+                  }}
+                  onClick={() => {
+                    const nextVal = !formData.declarationAccepted;
+                    handleChange('declarationAccepted', nextVal);
+                    sound.playClick();
                   }}
                 >
-                  <label
+                  <input
+                    type="checkbox"
+                    id="reg-declaration"
+                    required
+                    checked={formData.declarationAccepted}
+                    onChange={(e) => handleChange('declarationAccepted', e.target.checked)}
+                    onBlur={() => handleBlur('declarationAccepted')}
+                    onClick={(e) => e.stopPropagation()}
                     style={{
-                      display: 'flex',
-                      alignItems: 'flex-start',
-                      gap: '12px',
+                      width: '20px',
+                      height: '20px',
+                      marginTop: '2px',
+                      accentColor: 'var(--accent-cyan)',
                       cursor: 'pointer',
-                      userSelect: 'none'
+                      flexShrink: 0
                     }}
+                  />
+                  <label
+                    htmlFor="reg-declaration"
+                    style={{
+                      fontSize: '0.8rem',
+                      lineHeight: 1.5,
+                      color: 'var(--text-primary)',
+                      cursor: 'pointer',
+                      flex: 1
+                    }}
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <input
-                      type="checkbox"
-                      required
-                      checked={formData.declarationAccepted}
-                      onChange={(e) => handleChange('declarationAccepted', e.target.checked)}
-                      onBlur={() => handleBlur('declarationAccepted')}
-                      style={{
-                        width: '18px',
-                        height: '18px',
-                        marginTop: '3px',
-                        accentColor: 'var(--accent-cyan)',
-                        cursor: 'pointer',
-                        flexShrink: 0
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontSize: '0.8rem',
-                        lineHeight: 1.5,
-                        color: 'var(--text-primary)'
-                      }}
-                    >
-                      "Through the Quiz Club, we are preparing for placements with the support of the Placement Club by
-                      enhancing skills like aptitude, reasoning, and problem-solving. I am willing to pay any minimal fee
-                      required for the club’s activities and will actively participate in all its events."
-                    </span>
+                    "Through the Quiz Club, we are preparing for placements with the support of the Placement Club by
+                    enhancing skills like aptitude, reasoning, and problem-solving. I am willing to pay any minimal fee
+                    required for the club’s activities and will actively participate in all its events."
                   </label>
-                  {errors.declarationAccepted && touched.declarationAccepted && (
-                    <p style={{ color: 'var(--input-error-border)', fontSize: '0.72rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>
-                      {errors.declarationAccepted}
-                    </p>
-                  )}
                 </div>
+                {errors.declarationAccepted && touched.declarationAccepted && (
+                  <p style={{ color: 'var(--input-error-border)', fontSize: '0.72rem', marginTop: '-12px', marginLeft: '6px', fontFamily: 'var(--font-mono)' }}>
+                    {errors.declarationAccepted}
+                  </p>
+                )}
 
                 {/* Submit Action */}
-                <div style={{ marginTop: '4px' }}>
+                <div style={{ marginTop: '6px' }}>
                   <button
                     type="submit"
                     disabled={isSubmitting}
                     className="btn-cyan"
                     style={{
                       width: '100%',
+                      minHeight: '48px',
                       padding: '14px 20px',
-                      fontSize: '0.9rem',
+                      fontSize: '0.92rem',
                       letterSpacing: '0.04em',
                       fontWeight: 700,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '8px',
-                      opacity: isSubmitting ? 0.7 : 1,
+                      gap: '10px',
+                      opacity: isSubmitting ? 0.75 : 1,
                       cursor: isSubmitting ? 'not-allowed' : 'pointer'
                     }}
-                    onMouseEnter={() => sound.playHover()}
+                    onMouseEnter={() => !isSubmitting && sound.playHover()}
                   >
-                    <Send size={16} />
-                    <span>{isSubmitting ? 'VERIFYING & RECORDING DOSSIER...' : 'COMPLETE REGISTRATION'}</span>
+                    {isSubmitting ? (
+                      <>
+                        <div
+                          style={{
+                            width: '16px',
+                            height: '16px',
+                            border: '2px solid rgba(0,0,0,0.2)',
+                            borderTopColor: '#000',
+                            borderRadius: '50%',
+                            animation: 'spin 0.8s linear infinite'
+                          }}
+                        />
+                        <span>TRANSMITTING REGISTRATION...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        <span>SUBMIT REGISTRATION</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
