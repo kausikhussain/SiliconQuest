@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import os from 'node:os';
+import { INITIAL_REGISTRATIONS } from './seedData.js';
 
 // ─── Environment Detection ────────────────────────────────────────────
 const IS_VERCEL = !!(process.env.VERCEL || process.env.NOW_REGION || process.env.AWS_LAMBDA_FUNCTION_NAME);
@@ -17,9 +18,6 @@ if (!fs.existsSync(DATA_DIR)) {
 
 const DB_PATH = path.join(DATA_DIR, 'quizclub.db');
 const BACKUP_JSON_PATH = path.join(DATA_DIR, 'registrations.json');
-
-// Repo-bundled seed data path (read-only on Vercel, used for seeding)
-const SEED_JSON_PATH = path.resolve(process.cwd(), 'data', 'registrations.json');
 
 // Admin credentials
 export const ADMIN_PASSKEY = process.env.QUIZ_CLUB_ADMIN_PASSKEY || 'Silicon@Quiz2026';
@@ -63,6 +61,19 @@ async function initPostgres() {
     await pgPool.query('CREATE INDEX IF NOT EXISTS idx_reg_branch ON registrations(branch)');
     await pgPool.query('CREATE INDEX IF NOT EXISTS idx_reg_created ON registrations(created_at)');
 
+    // Seed initial records if empty
+    const countRes = await pgPool.query('SELECT COUNT(*) as count FROM registrations');
+    if (parseInt(countRes.rows[0].count, 10) === 0) {
+      for (const r of INITIAL_REGISTRATIONS) {
+        await pgPool.query(
+          `INSERT INTO registrations (ref_id, name, sic_no, branch, tenth_percentage, twelfth_percentage, interested_subject, declaration_accepted, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (ref_id) DO NOTHING`,
+          [r.ref_id, r.name, r.sic_no, r.branch, r.tenth_percentage, r.twelfth_percentage, r.interested_subject, r.declaration_accepted, r.created_at]
+        );
+      }
+      console.log('[DB] PostgreSQL seeded with initial records');
+    }
+
     pgReady = true;
     console.log('[DB] PostgreSQL connected via DATABASE_URL');
     return true;
@@ -99,6 +110,20 @@ async function initSqlite() {
       CREATE INDEX IF NOT EXISTS idx_reg_branch ON registrations(branch);
       CREATE INDEX IF NOT EXISTS idx_reg_created ON registrations(created_at);
     `);
+
+    // Seed initial records if empty
+    const countRow = sqliteDb.prepare('SELECT COUNT(*) as count FROM registrations').get();
+    if (countRow && countRow.count === 0) {
+      const insert = sqliteDb.prepare(`
+        INSERT INTO registrations (ref_id, name, sic_no, branch, tenth_percentage, twelfth_percentage, interested_subject, declaration_accepted, created_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `);
+      for (const r of INITIAL_REGISTRATIONS) {
+        insert.run(r.ref_id, r.name, r.sic_no, r.branch, r.tenth_percentage, r.twelfth_percentage, r.interested_subject, r.declaration_accepted, r.created_at);
+      }
+      console.log('[DB] SQLite seeded with initial records');
+    }
+
     console.log('[DB] SQLite database initialized at', DB_PATH);
     return true;
   } catch (err) {
@@ -113,12 +138,16 @@ function readJsonBackup() {
   try {
     if (fs.existsSync(BACKUP_JSON_PATH)) {
       const content = fs.readFileSync(BACKUP_JSON_PATH, 'utf-8');
-      return JSON.parse(content);
+      const list = JSON.parse(content);
+      if (Array.isArray(list) && list.length > 0) return list;
     }
   } catch (e) {
     console.error('[DB] Error reading backup JSON:', e.message);
   }
-  return [];
+  // Initialize with seed data if backup is empty or non-existent
+  const initial = [...INITIAL_REGISTRATIONS];
+  writeJsonBackup(initial);
+  return initial;
 }
 
 function writeJsonBackup(list) {
@@ -131,21 +160,6 @@ function writeJsonBackup(list) {
   }
 }
 
-// Seed /tmp storage from repo-bundled data on cold start
-function seedFromRepo() {
-  if (!IS_VERCEL) return;
-  if (fs.existsSync(BACKUP_JSON_PATH)) return; // already seeded
-  try {
-    if (fs.existsSync(SEED_JSON_PATH)) {
-      const seedContent = fs.readFileSync(SEED_JSON_PATH, 'utf-8');
-      fs.writeFileSync(BACKUP_JSON_PATH, seedContent, 'utf-8');
-      console.log('[DB] Seeded /tmp from repo data/registrations.json');
-    }
-  } catch (e) {
-    console.warn('[DB] Seed from repo failed:', e.message);
-  }
-}
-
 // ─── Database Initialization ─────────────────────────────────────────
 let dbInitPromise = null;
 
@@ -155,9 +169,6 @@ export async function ensureDbReady() {
       // Try PostgreSQL first (production)
       const pgOk = await initPostgres();
       if (pgOk) return;
-
-      // Seed /tmp from repo on serverless cold start
-      seedFromRepo();
 
       // Try SQLite next (local dev)
       const sqliteOk = await initSqlite();
