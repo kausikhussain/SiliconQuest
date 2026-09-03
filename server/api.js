@@ -9,8 +9,7 @@ import {
   sanitizeText,
   ensureDbReady,
   isPostgresReady,
-  hasDbConnectionUrl,
-  clearAllRegistrations
+  hasDbConnectionUrl
 } from './db.js';
 
 // Helper to read request body as JSON (handles both stream and pre-parsed)
@@ -302,19 +301,6 @@ export async function handleApiRequest(req, res) {
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     res.end(csvContent);
-    return true;
-  }
-
-  // 7. POST /api/admin/clear (PROTECTED)
-  if (pathname === '/api/admin/clear' && req.method === 'POST') {
-    const token = getBearerToken(req);
-    if (!verifyAdminToken(token)) {
-      sendJson(res, 401, { success: false, message: 'Unauthorized: Admin passkey required' });
-      return true;
-    }
-
-    const result = await clearAllRegistrations();
-    sendJson(res, 200, result);
     return true;
   }
 
