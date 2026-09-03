@@ -12,7 +12,8 @@ import {
   hasDbConnectionUrl,
   addSseSubscriber,
   removeSseSubscriber,
-  getEventsSince
+  getEventsSince,
+  clearAllRegistrations
 } from './db.js';
 
 // Helper to read request body as JSON (handles both stream and pre-parsed)
@@ -390,6 +391,19 @@ export async function handleApiRequest(req, res) {
       stats,
       serverTime: new Date().toISOString()
     });
+    return true;
+  }
+
+  // 8. POST /api/admin/clear (PROTECTED)
+  if (pathname === '/api/admin/clear' && req.method === 'POST') {
+    const token = getBearerToken(req);
+    if (!verifyAdminToken(token)) {
+      sendJson(res, 401, { success: false, message: 'Unauthorized: Admin passkey required' });
+      return true;
+    }
+
+    const result = await clearAllRegistrations();
+    sendJson(res, 200, result);
     return true;
   }
 

@@ -446,6 +446,38 @@ export async function getStats() {
   };
 }
 
+export async function clearAllRegistrations() {
+  await ensureDbReady();
+
+  if (pgReady && pgPool) {
+    try {
+      await pgPool.query('DELETE FROM registrations;');
+      console.log('[DB] PostgreSQL registrations cleared');
+    } catch (err) {
+      console.error('[DB] PostgreSQL clear error:', err.message);
+    }
+  }
+
+  if (sqliteDb) {
+    try {
+      sqliteDb.exec('DELETE FROM registrations;');
+      console.log('[DB] SQLite registrations cleared');
+    } catch (err) {
+      console.error('[DB] SQLite clear error:', err.message);
+    }
+  }
+
+  writeJsonBackup([]);
+  recentRegistrationEvents.length = 0;
+
+  broadcastSseEvent('registration', {
+    type: 'registrations_cleared',
+    timestamp: new Date().toISOString()
+  });
+
+  return { success: true, message: 'All registrations cleared successfully' };
+}
+
 export async function exportCSV() {
   const records = await getRegistrations();
   const headers = [
