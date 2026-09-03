@@ -41,6 +41,38 @@
   --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
   --shadow-elevated: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 30px -10px rgba(0, 242, 254, 0.15);
   --shadow-cyan-glow: 0 0 35px -5px rgba(0, 242, 254, 0.4);
+
+  /* Form Inputs & Controls - Dark Mode */
+  --input-bg: rgba(255, 255, 255, 0.04);
+  --input-bg-hover: rgba(255, 255, 255, 0.07);
+  --input-bg-focus: rgba(0, 242, 254, 0.06);
+  --input-border: rgba(255, 255, 255, 0.14);
+  --input-border-hover: rgba(255, 255, 255, 0.28);
+  --input-border-focus: var(--accent-cyan);
+  --input-text: #f8fafc;
+  --input-placeholder: #64748b;
+  --input-focus-ring: 0 0 0 3px rgba(0, 242, 254, 0.22);
+  --input-error-border: #f43f5e;
+  --input-error-focus-ring: 0 0 0 3px rgba(244, 63, 94, 0.25);
+  
+  --form-card-bg: #090c14;
+  --form-card-border: rgba(0, 242, 254, 0.35);
+  --form-section-bg: rgba(255, 255, 255, 0.025);
+  --form-section-border: rgba(255, 255, 255, 0.08);
+  --form-select-bg: #090c14;
+  --form-select-option-bg: #0e1320;
+  --form-select-option-text: #f8fafc;
+  --form-modal-backdrop: rgba(4, 5, 8, 0.92);
+  --form-modal-close-bg: rgba(255, 255, 255, 0.08);
+  --form-modal-close-border: rgba(255, 255, 255, 0.15);
+  --form-modal-close-color: #f8fafc;
+  --form-radio-card-bg: rgba(255, 255, 255, 0.03);
+  --form-radio-card-border: rgba(255, 255, 255, 0.09);
+  --form-radio-card-active-bg: rgba(0, 242, 254, 0.12);
+  --form-radio-card-active-border: var(--accent-cyan);
+  --form-radio-card-active-text: #ffffff;
+  --form-declaration-bg: rgba(0, 242, 254, 0.04);
+  --form-declaration-border: rgba(0, 242, 254, 0.22);
 }
 
 [data-theme="light"] {
@@ -85,6 +117,38 @@
   --shadow-subtle: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
   --shadow-elevated: 0 20px 40px -15px rgba(0, 0, 0, 0.12), 0 0 30px -10px rgba(2, 132, 199, 0.1);
   --shadow-cyan-glow: 0 0 35px -5px rgba(2, 132, 199, 0.25);
+
+  /* Form Inputs & Controls - Light Mode */
+  --input-bg: #ffffff;
+  --input-bg-hover: #f8fafc;
+  --input-bg-focus: #ffffff;
+  --input-border: #cbd5e1;
+  --input-border-hover: #94a3b8;
+  --input-border-focus: var(--accent-cyan);
+  --input-text: #0f172a;
+  --input-placeholder: #94a3b8;
+  --input-focus-ring: 0 0 0 3px rgba(2, 132, 199, 0.2);
+  --input-error-border: #e11d48;
+  --input-error-focus-ring: 0 0 0 3px rgba(225, 29, 72, 0.2);
+  
+  --form-card-bg: #ffffff;
+  --form-card-border: rgba(2, 132, 199, 0.35);
+  --form-section-bg: #f8fafc;
+  --form-section-border: #e2e8f0;
+  --form-select-bg: #ffffff;
+  --form-select-option-bg: #ffffff;
+  --form-select-option-text: #0f172a;
+  --form-modal-backdrop: rgba(15, 23, 42, 0.65);
+  --form-modal-close-bg: #f1f5f9;
+  --form-modal-close-border: #cbd5e1;
+  --form-modal-close-color: #0f172a;
+  --form-radio-card-bg: #ffffff;
+  --form-radio-card-border: #e2e8f0;
+  --form-radio-card-active-bg: rgba(2, 132, 199, 0.08);
+  --form-radio-card-active-border: var(--accent-cyan);
+  --form-radio-card-active-text: #0284c7;
+  --form-declaration-bg: rgba(2, 132, 199, 0.05);
+  --form-declaration-border: rgba(2, 132, 199, 0.25);
 }
 
 :root {
@@ -140,12 +204,115 @@ body {
 /* Ensure mobile form elements don't auto-zoom on iOS */
 input, select, textarea {
   font-size: 16px !important;
+  color: var(--input-text);
+  font-family: var(--font-sans);
 }
 
 @media (min-width: 768px) {
   input, select, textarea {
     font-size: 0.9rem !important;
   }
+}
+
+/* ==========================================================================
+   Form Controls, Inputs, Placeholders, Selects & Autofill
+   ========================================================================== */
+
+/* Distinct, muted but readable placeholders in both themes */
+input::placeholder,
+textarea::placeholder {
+  color: var(--input-placeholder) !important;
+  opacity: 1 !important;
+  font-family: var(--font-sans);
+}
+
+/* High-contrast form labels */
+.form-field-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+/* Chrome, Edge, Safari, Firefox Autofill styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--input-text) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+  border-color: var(--input-border-focus) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Form Input Container Wrapper */
+.form-input-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-input-container:hover {
+  border-color: var(--input-border-hover);
+  background-color: var(--input-bg-hover);
+}
+
+.form-input-container:focus-within {
+  border-color: var(--input-border-focus) !important;
+  box-shadow: var(--input-focus-ring) !important;
+  background-color: var(--input-bg-focus) !important;
+}
+
+.form-input-container.error {
+  border-color: var(--input-error-border) !important;
+}
+
+.form-input-container.error:focus-within {
+  box-shadow: var(--input-error-focus-ring) !important;
+}
+
+/* Clean Input Field */
+.form-text-input {
+  width: 100%;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: var(--input-text) !important;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.form-text-input.font-mono {
+  font-family: var(--font-mono) !important;
+}
+
+/* Select Dropdown Element */
+.form-select-element {
+  width: 100%;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  color: var(--input-text) !important;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.form-select-element option {
+  background-color: var(--form-select-option-bg);
+  color: var(--form-select-option-text);
+  padding: 8px 12px;
 }
 
 /* Background Atmosphere Grids & Radial Glow */
@@ -182,7 +349,53 @@ input, select, textarea {
 /* Typography Utility Classes */
 .font-display {
   font-family: var(--font-display);
+}
+
+/* ==========================================================================
+   Hero Typography & Safe Text Gradient (Prevents Unclipped Solid Rectangles)
+   ========================================================================== */
+.hero-title-main {
+  display: block;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.hero-title-sub {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
   letter-spacing: -0.03em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--accent-cyan); /* Bulletproof fallback: Always clean text, never a solid block */
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .hero-title-sub {
+    background-image: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 65%, var(--text-highlight) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+
+[data-theme="light"] .hero-title-sub {
+  color: #0284c7;
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  [data-theme="light"] .hero-title-sub {
+    background-image: linear-gradient(135deg, #0f172a 0%, #0284c7 65%, #0369a1 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
 }
 
 .font-mono {

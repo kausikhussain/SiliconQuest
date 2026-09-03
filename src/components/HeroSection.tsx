@@ -51,7 +51,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
         }}
       />
 
-      <div className="section-container" style={{ zIndex: 2, position: 'relative' }}>
+      <div className="section-container" style={{ zIndex: 10, position: 'relative' }}>
         <div style={{ maxWidth: '1040px' }}>
           {/* Institutional Badge */}
           <div
@@ -92,7 +92,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
                 textOverflow: 'ellipsis'
               }}
             >
-              SILICON INSTITUTE OF TECHNOLOGY · SAMBALPUR & BHUBANESWAR
+              SILICON INSTITUTE OF TECHNOLOGY · SAMBALPUR, ODISHA
             </span>
           </div>
 
@@ -104,24 +104,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
               fontWeight: 800,
               lineHeight: 0.98,
               letterSpacing: '-0.04em',
-              color: 'var(--text-primary)',
               marginBottom: '20px',
-              textTransform: 'uppercase'
+              textTransform: 'uppercase',
+              position: 'relative',
+              zIndex: 12
             }}
           >
-            SILICON <br />
-            <span
-              style={{
-                background:
-                  theme === 'light'
-                    ? 'linear-gradient(135deg, #0f172a 0%, #0284c7 70%, #0369a1 100%)'
-                    : 'linear-gradient(135deg, #ffffff 0%, #00f2fe 70%, #38bdf8 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}
-            >
-              QUIZ CLUB
-            </span>
+            <span className="hero-title-main">SILICON</span>
+            <span className="hero-title-sub">QUIZ CLUB</span>
           </h1>
 
           {/* Punchline Statement */}
@@ -159,7 +149,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
               maxWidth: '740px'
             }}
           >
-            The premier intellectual society of Silicon Institute of Technology & Silicon University. Pushing the
+            The premier intellectual society of Silicon Institute of Technology, Sambalpur, Odisha. Pushing the
             frontiers of curiosity, analytical speed, and academic championship excellence.
           </p>
 
@@ -217,7 +207,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
               className="hero-audition-btn"
               onMouseEnter={() => sound.playHover()}
             >
-              <span>AUDITION INTAKE</span>
+              <span>JOIN QUIZ CLUB</span>
               <ArrowRight size={14} />
             </button>
           </div>
