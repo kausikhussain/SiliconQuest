@@ -3,21 +3,23 @@ export interface ClubEvent {
   title: string;
   subtitle: string;
   date: string;
-  edition: string;
-  category: 'Flagship League' | 'National Championship' | 'Aptitude Challenge' | 'Intra-Institute' | 'Special Edition';
+  isoDate?: string;
+  year: number;
+  edition?: string;
+  category: string;
   location: string;
   venue: string;
   description: string;
   shortDescription: string;
   image: string;
-  status: 'upcoming' | 'ongoing' | 'archived';
-  highlights: string[];
+  status: 'UPCOMING' | 'COMPLETED' | 'upcoming' | 'archived';
+  highlights?: string[];
   podium?: {
     first: string;
     second: string;
     third: string;
   };
-  registrationOpen: boolean;
+  registrationOpen?: boolean;
 }
 
 export interface GalleryPhoto {

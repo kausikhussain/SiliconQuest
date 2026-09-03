@@ -30,77 +30,102 @@ export const CLUB_INFO = {
   ]
 };
 
-export const CLUB_EVENTS: ClubEvent[] = [
-  {
-    id: 'brainblast-2026',
-    title: 'BRAINBLAST 2026',
-    subtitle: 'The Ultimate Inter-College Quiz Challenge',
-    edition: 'Edition VII',
-    date: 'OCTOBER 24, 2026',
-    category: 'Flagship League',
-    location: 'Silicon Sambalpur Auditorium & Virtual Slido Arena',
-    venue: 'Main Academic Block, Silicon Campus',
-    description: 'The flagship annual multi-tier championship bringing together the sharpest minds across Eastern India. Multi-round elimination: Rapid Fire, Audio-Visual Clues, Lateral Connects, and high-stakes Buzzer Final.',
-    shortDescription: 'Flagship inter-collegiate championship with multi-round elimination and live buzzer finals.',
-    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.33 AM (1).jpeg',
-    status: 'upcoming',
-    registrationOpen: true,
-    highlights: [
-      '3-Tier Elimination: Written Prelims → Semi-Finals → Main Stage Final',
-      'Instant Live Audience & Team Telemetry powered by Slido',
-      'Domains: Tech & AI, Sci-Astronomy, Geo-History, Pop Connects, Math Aptitude',
-      'Exclusive Silicon Quiz Club Trophy & Merit Certificates'
-    ],
-    podium: {
-      first: 'TBA — Open Registrations',
-      second: 'TBA — Open Registrations',
-      third: 'TBA — Open Registrations'
+/**
+ * Helper to dynamically determine whether an event is UPCOMING or COMPLETED
+ * based on current date.
+ * (event date < current date -> COMPLETED, otherwise UPCOMING)
+ */
+export const getEventStatus = (isoDate?: string, fallbackStatus?: string): 'UPCOMING' | 'COMPLETED' => {
+  if (isoDate) {
+    const eventDate = new Date(`${isoDate}T23:59:59+05:30`);
+    if (!isNaN(eventDate.getTime())) {
+      const now = new Date();
+      return now.getTime() <= eventDate.getTime() ? 'UPCOMING' : 'COMPLETED';
     }
-  },
+  }
+  return fallbackStatus === 'upcoming' || fallbackStatus === 'UPCOMING' ? 'UPCOMING' : 'COMPLETED';
+};
+
+export const CLUB_EVENTS: ClubEvent[] = [
+  // ═════════════════════════════════════════════════════════════════════════
+  // UPCOMING — ONLY ONE CONFIRMED EVENT
+  // ═════════════════════════════════════════════════════════════════════════
   {
-    id: 'college-quiz-league',
+    id: 'orientation-programme-2026',
+    title: 'ORIENTATION PROGRAMME',
+    subtitle: 'Silicon Quiz Club Induction',
+    edition: '2026 Intake',
+    date: '10 SEPTEMBER 2026',
+    isoDate: '2026-09-10',
+    year: 2026,
+    category: 'Induction',
+    location: 'Silicon Institute of Technology, Sambalpur',
+    venue: 'Silicon Campus',
+    description: 'Welcome and introductory orientation session for new students and quiz aspirants, introducing the club culture, upcoming initiatives, and competitive formats.',
+    shortDescription: 'Welcome and introduction to Silicon Quiz Club, club culture, and competitive leagues.',
+    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.49.07 AM.jpeg',
+    status: 'UPCOMING'
+  },
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // COMPLETED — LATEST AUGUST 2026 ACTIVITY
+  // ═════════════════════════════════════════════════════════════════════════
+  {
+    id: 'college-quiz-league-2026',
     title: 'COLLEGE QUIZ LEAGUE',
     subtitle: 'Think Fast. Answer Quicker.',
-    edition: 'Winter League Season 4',
-    date: 'ARCHIVED · FEB 2025',
-    category: 'National Championship',
+    edition: 'Season 4',
+    date: 'AUGUST 2026',
+    isoDate: '2026-08-23',
+    year: 2026,
+    category: 'Championship League',
     location: 'Auditorium Hall, Silicon Institute of Technology, Sambalpur',
     venue: 'Stage One Arena',
     description: 'An adrenaline-fueled speed league featuring 20 live interactive rounds, real-time Slido telemetry, and high-pressure buzzer tiebreakers witnessed by a packed auditorium.',
     shortDescription: 'Speed league with 20 live rounds, real-time scoring, and packed-house buzzer finals.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.39.13 AM.jpeg',
-    status: 'archived',
-    registrationOpen: false,
-    highlights: [
-      '20 Live Interactive Rounds with Real-Time Scoreboard',
-      'Over 40 participating two-member syndicates',
-      'High-decibel tiebreaker buzzer rounds'
-    ],
+    status: 'COMPLETED',
     podium: {
       first: 'Priyabrata Pal & Ayush Jena',
       second: 'Sanya Sonalika & Saundarya Sinha',
       third: 'Satyam Chandra Nath & ARYAN DEO'
     }
   },
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // COMPLETED — 2025 ARCHIVES
+  // ═════════════════════════════════════════════════════════════════════════
+  {
+    id: 'brainblast-archive',
+    title: 'BRAINBLAST',
+    subtitle: 'Inter-College Quiz Challenge',
+    edition: 'Championship Archive',
+    date: '2025',
+    isoDate: '2025-11-29',
+    year: 2025,
+    category: 'Flagship Championship',
+    location: 'Silicon Sambalpur Auditorium',
+    venue: 'Main Auditorium',
+    description: 'Flagship inter-collegiate championship with multi-round elimination and live stage finals.',
+    shortDescription: 'Flagship inter-collegiate championship with multi-round elimination and live stage finals.',
+    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.33 AM (1).jpeg',
+    status: 'COMPLETED'
+  },
   {
     id: 'ast-challenge-2025',
     title: 'AST-2025 QUIZ CHALLENGE',
     subtitle: 'Applied Science & Technology Invitational',
     edition: '2025 Annual',
-    date: 'ARCHIVED · NOV 2025',
+    date: 'NOVEMBER 2025',
+    isoDate: '2025-11-15',
+    year: 2025,
     category: 'Aptitude Challenge',
     location: 'Lecture Hall 04, Silicon Institute of Technology',
     venue: 'LH-04',
     description: 'Faculty-supervised analytical invitational testing mathematical shortcuts, astronomical anomalies, and deep tech fundamentals through rigorous pen-and-paper screening.',
     shortDescription: 'Analytical invitational with pen-and-paper screening and faculty-supervised jury.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.32 AM.jpeg',
-    status: 'archived',
-    registrationOpen: false,
-    highlights: [
-      'Rigorous pen-and-paper preliminary screening',
-      'Faculty-supervised jury and certificate commendation',
-      'Analytical aptitude and clock mechanics special segment'
-    ],
+    status: 'COMPLETED',
     podium: {
       first: 'K. Bharat & Asish Patra',
       second: 'Om Prakash Dash & Tanisha Pattnaik',
@@ -137,10 +162,21 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
     title: 'Stage Aptitude Screening & Scoring Telemetry',
     category: 'live-stage',
     categoryLabel: 'Stage Operations',
-    src: '/assets/images/WhatsApp Image 2026-08-23 at 12.41.34 AM.jpeg',
+    src: '/assets/images/Finale Between Winners.jpeg',
     caption: 'Quizmaster presenting a high-pressure numerical deduction problem while technical coordinators maintain real-time arena scoring.',
     date: 'Aptitude Challenge',
     location: 'Silicon Hall',
+    featured: true
+  },
+  {
+    id: 'gal-first-years-2026',
+    title: 'First Years 2026 Induction & Cohort Assembly',
+    category: 'audience',
+    categoryLabel: '2026 Cohort',
+    src: '/assets/images/First years 2026.jpeg',
+    caption: 'The incoming first-year batch of 2026 seated in the lecture hall auditorium holding awards after their introductory quiz session.',
+    date: 'August 2026',
+    location: 'Silicon Lecture Hall',
     featured: true
   },
   {

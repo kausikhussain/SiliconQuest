@@ -1,6 +1,6 @@
 import React from 'react';
 import { Calendar, MapPin, Trophy, Award, Clock } from 'lucide-react';
-import { CLUB_EVENTS } from '../data/clubData';
+import { CLUB_EVENTS, getEventStatus } from '../data/clubData';
 import { sound } from '../utils/soundEngine';
 
 interface EventShowcaseProps {
@@ -8,8 +8,13 @@ interface EventShowcaseProps {
 }
 
 export const EventShowcase: React.FC<EventShowcaseProps> = () => {
-  const upcomingEvent = CLUB_EVENTS.find((e) => e.status === 'upcoming') || CLUB_EVENTS[0];
-  const pastEvents = CLUB_EVENTS.filter((e) => e.status === 'archived');
+  // Dynamically determine event status based on current date
+  const upcomingEvents = CLUB_EVENTS.filter(
+    (e) => getEventStatus(e.isoDate, e.status) === 'UPCOMING'
+  );
+  const completedEvents = CLUB_EVENTS.filter(
+    (e) => getEventStatus(e.isoDate, e.status) === 'COMPLETED'
+  );
 
   const podiumColors = [
     { label: '1ST', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)' },
@@ -29,147 +34,131 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
       className="events-main-section"
     >
       <div className="section-container">
-        {/* Section Header — The Story of Silicon Quiz Club */}
-        <div style={{ marginBottom: '48px' }} className="events-header">
+        {/* Section Header */}
+        <div style={{ marginBottom: '40px' }} className="events-header">
           <div className="section-tagline">05 · THE QUIZ CLUB ARCHIVE</div>
           <h2 className="section-title">
-            THE MOMENTS <span style={{ color: 'var(--accent-cyan)' }}>THAT DEFINE US.</span>
+            THE REAL <span style={{ color: 'var(--accent-cyan)' }}>TIMELINE</span>
           </h2>
           <p className="section-subtitle">
-            A visual archive of the people, questions, competition and moments that shaped Silicon Quiz Club.
+            Authentic chronicle of completed club activities through August 2026 and confirmed upcoming programmes.
           </p>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            FEATURED VISUAL MOMENT — Full-Bleed Cinematic Hero
+            UPCOMING EVENT — ONLY ONE CONFIRMED (Refined, Non-Dominating Card)
         ═══════════════════════════════════════════════════════════════════ */}
-        <div
-          className="glass-panel featured-event-hero"
-          style={{
-            borderRadius: '24px',
-            overflow: 'hidden',
-            border: '1px solid var(--border-accent)',
-            boxShadow: 'var(--shadow-elevated)',
-            marginBottom: '72px',
-            position: 'relative'
-          }}
-        >
-          {/* Full-bleed Background Image */}
-          <div className="featured-event-image-box">
-            <img
-              src={upcomingEvent.image}
-              alt={upcomingEvent.title}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                objectPosition: 'center 40%',
-                filter: 'brightness(0.65) contrast(1.1)',
-                transition: 'transform 0.6s ease'
-              }}
-            />
-            {/* Cinematic Scrim */}
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(to top, rgba(7, 9, 14, 0.92) 0%, rgba(7, 9, 14, 0.45) 50%, rgba(7, 9, 14, 0.25) 100%)'
-              }}
-            />
-          </div>
-
-          {/* Clean Editorial Content Overlay — Image First */}
-          <div className="featured-event-content">
-            {/* Small Category Label */}
-            <div style={{ marginBottom: '16px' }}>
+        {upcomingEvents.map((evt) => (
+          <div
+            key={evt.id}
+            className="glass-panel upcoming-event-card"
+            style={{
+              borderRadius: '20px',
+              padding: '28px 28px',
+              border: '1px solid rgba(0, 242, 254, 0.35)',
+              background: 'linear-gradient(135deg, rgba(0, 242, 254, 0.05) 0%, var(--bg-card) 100%)',
+              boxShadow: 'var(--shadow-elevated)',
+              marginBottom: '56px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px'
+            }}
+            onMouseEnter={() => sound.playHover()}
+          >
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '10px' }}>
               <span
                 className="font-mono"
                 style={{
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.16em',
+                  fontSize: '0.68rem',
+                  padding: '4px 12px',
+                  borderRadius: '999px',
+                  background: 'rgba(0, 242, 254, 0.15)',
+                  border: '1px solid var(--accent-cyan)',
                   color: 'var(--accent-cyan)',
-                  textTransform: 'uppercase',
                   fontWeight: 700,
+                  letterSpacing: '0.14em',
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '6px'
                 }}
               >
-                FLAGSHIP CHAPTER · EDITION VII
+                ● UPCOMING
+              </span>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: '0.82rem',
+                  color: 'var(--text-primary)',
+                  fontWeight: 700,
+                  letterSpacing: '0.08em'
+                }}
+              >
+                {evt.date}
+              </span>
+              <span style={{ color: 'var(--text-muted)' }}>·</span>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--text-muted)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                <MapPin size={12} color="var(--accent-cyan)" />
+                {evt.venue}
               </span>
             </div>
 
-            {/* Large Editorial Title */}
             <h3
               className="font-display"
               style={{
-                fontSize: 'clamp(2rem, 5.5vw, 3.8rem)',
+                fontSize: 'clamp(1.5rem, 3.5vw, 2.2rem)',
                 fontWeight: 800,
-                color: '#ffffff',
-                letterSpacing: '-0.025em',
-                marginBottom: '12px',
-                lineHeight: 1.05
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
+                lineHeight: 1.15
               }}
             >
-              {upcomingEvent.title}
+              {evt.title}
             </h3>
 
-            {/* Very Short Supporting Text */}
             <p
               style={{
-                fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)',
+                fontSize: '0.92rem',
                 lineHeight: 1.6,
-                color: 'rgba(255, 255, 255, 0.85)',
-                marginBottom: '20px',
-                maxWidth: '620px'
+                color: 'var(--text-secondary)',
+                maxWidth: '680px',
+                margin: 0
               }}
             >
-              A flagship chapter of the Silicon Quiz Club bringing together the sharpest academic minds.
+              {evt.shortDescription}
             </p>
-
-            {/* Minimal Date & Venue Badge */}
-            <div
-              className="font-mono"
-              style={{
-                display: 'inline-flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                gap: '12px',
-                fontSize: '0.74rem',
-                color: 'rgba(255, 255, 255, 0.7)',
-                padding: '8px 16px',
-                borderRadius: '999px',
-                background: 'rgba(7, 9, 14, 0.75)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                width: 'fit-content'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Calendar size={13} color="var(--accent-cyan)" />
-                <span>{upcomingEvent.date}</span>
-              </div>
-              <span style={{ opacity: 0.4 }}>·</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <MapPin size={13} color="var(--accent-cyan)" />
-                <span>{upcomingEvent.venue}</span>
-              </div>
-            </div>
           </div>
-        </div>
+        ))}
 
         {/* ═══════════════════════════════════════════════════════════════════
-            ARCHIVED EVENT CHAPTERS — Editorial Split-Layout & Podiums
+            COMPLETED EVENTS ARCHIVE — Editorial Split-Layout & Podiums
         ═══════════════════════════════════════════════════════════════════ */}
-        <div id="laurels" style={{ marginBottom: '20px', scrollMarginTop: '100px' }}>
-          <div className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)', letterSpacing: '0.15em', marginBottom: '8px' }}>
-            CHAMPIONSHIP ARCHIVES & PODIUMS
+        <div id="laurels" style={{ marginBottom: '24px', scrollMarginTop: '100px' }}>
+          <div
+            className="font-mono"
+            style={{
+              fontSize: '0.72rem',
+              color: 'var(--text-muted)',
+              letterSpacing: '0.15em',
+              marginBottom: '8px',
+              textTransform: 'uppercase'
+            }}
+          >
+            COMPLETED EVENTS ARCHIVE
           </div>
           <div style={{ width: '48px', height: '2px', background: 'var(--accent-cyan)', borderRadius: '1px' }} />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', marginBottom: '64px' }}>
-          {pastEvents.map((evt, idx) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', marginBottom: '64px' }}>
+          {completedEvents.map((evt, idx) => (
             <div
               key={evt.id}
               className={`glass-panel event-chapter ${idx % 2 === 1 ? 'event-chapter-reversed' : ''}`}
@@ -198,7 +187,8 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    minHeight: '260px'
+                    objectPosition: 'center 48%',
+                    minHeight: '280px'
                   }}
                   loading="lazy"
                 />
@@ -207,10 +197,10 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(to top, rgba(7, 9, 14, 0.6) 0%, transparent 50%)'
+                    background: 'linear-gradient(to top, rgba(7, 9, 14, 0.7) 0%, transparent 50%)'
                   }}
                 />
-                {/* Category Badge */}
+                {/* Status Badge */}
                 <div
                   className="font-mono"
                   style={{
@@ -224,25 +214,28 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
                     fontSize: '0.65rem',
                     color: '#94a3b8',
                     border: '1px solid var(--border-subtle)',
-                    letterSpacing: '0.08em'
+                    letterSpacing: '0.08em',
+                    fontWeight: 600
                   }}
                 >
-                  {evt.category.toUpperCase()}
+                  COMPLETED · {evt.date.toUpperCase()}
                 </div>
                 {/* Edition on image */}
-                <div
-                  className="font-mono"
-                  style={{
-                    position: 'absolute',
-                    bottom: '14px',
-                    left: '14px',
-                    fontSize: '0.7rem',
-                    color: '#ffffff',
-                    letterSpacing: '0.1em'
-                  }}
-                >
-                  {evt.edition}
-                </div>
+                {evt.edition && (
+                  <div
+                    className="font-mono"
+                    style={{
+                      position: 'absolute',
+                      bottom: '14px',
+                      left: '14px',
+                      fontSize: '0.7rem',
+                      color: '#ffffff',
+                      letterSpacing: '0.1em'
+                    }}
+                  >
+                    {evt.edition}
+                  </div>
+                )}
               </div>
 
               {/* Content Column */}
@@ -312,7 +305,7 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
                     fontSize: '0.88rem',
                     lineHeight: 1.6,
                     color: 'var(--text-secondary)',
-                    marginBottom: '20px'
+                    marginBottom: evt.podium ? '20px' : '0'
                   }}
                 >
                   {evt.shortDescription}
@@ -410,20 +403,20 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            CLUB TIMELINE — Compact Vertical
+            CLUB TIMELINE — Strict Chronological History (2025 → August 2026 → Sept 2026)
         ═══════════════════════════════════════════════════════════════════ */}
         <div className="club-timeline" style={{ position: 'relative', paddingLeft: '24px' }}>
           <div
             className="font-mono"
             style={{
-              fontSize: '0.7rem',
+              fontSize: '0.72rem',
               color: 'var(--text-muted)',
               letterSpacing: '0.15em',
-              marginBottom: '20px',
-              paddingLeft: '0'
+              marginBottom: '24px',
+              textTransform: 'uppercase'
             }}
           >
-            CLUB TIMELINE
+            HISTORICAL EVENT TIMELINE
           </div>
 
           {/* Vertical Line */}
@@ -439,116 +432,103 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
             }}
           />
 
-          {/* Timeline Entries */}
-          {[...CLUB_EVENTS].reverse().map((evt) => (
-            <div
-              key={evt.id}
-              style={{
-                position: 'relative',
-                paddingBottom: '20px',
-                paddingLeft: '4px'
-              }}
-            >
-              {/* Dot */}
+          {/* Timeline Entries (Earliest to Latest) */}
+          {[
+            ...completedEvents.slice().reverse(),
+            ...upcomingEvents
+          ].map((evt) => {
+            const isUpcoming = getEventStatus(evt.isoDate, evt.status) === 'UPCOMING';
+            return (
               <div
+                key={evt.id}
                 style={{
-                  position: 'absolute',
-                  left: '-23px',
-                  top: '6px',
-                  width: '10px',
-                  height: '10px',
-                  borderRadius: '50%',
-                  background: evt.status === 'upcoming' ? 'var(--accent-cyan)' : 'var(--border-subtle)',
-                  border: evt.status === 'upcoming' ? '2px solid var(--accent-cyan)' : '2px solid var(--bg-primary)',
-                  boxShadow: evt.status === 'upcoming' ? '0 0 10px rgba(0, 242, 254, 0.4)' : 'none'
+                  position: 'relative',
+                  paddingBottom: '24px',
+                  paddingLeft: '6px'
                 }}
-              />
+              >
+                {/* Dot */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: '-23px',
+                    top: '6px',
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    background: isUpcoming ? 'var(--accent-cyan)' : 'var(--border-subtle)',
+                    border: isUpcoming ? '2px solid var(--accent-cyan)' : '2px solid var(--bg-primary)',
+                    boxShadow: isUpcoming ? '0 0 10px rgba(0, 242, 254, 0.4)' : 'none'
+                  }}
+                />
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                <span
-                  className="font-mono"
-                  style={{
-                    fontSize: '0.72rem',
-                    fontWeight: 700,
-                    color: evt.status === 'upcoming' ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                    letterSpacing: '0.06em'
-                  }}
-                >
-                  {evt.date.replace('ARCHIVED · ', '')}
-                </span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>—</span>
-                <span
-                  style={{
-                    fontSize: '0.85rem',
-                    fontWeight: 600,
-                    color: 'var(--text-primary)'
-                  }}
-                >
-                  {evt.title}
-                </span>
-                {evt.status === 'upcoming' && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                  <span
+                    className="font-mono"
+                    style={{
+                      fontSize: '0.72rem',
+                      fontWeight: 700,
+                      color: isUpcoming ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                      letterSpacing: '0.06em'
+                    }}
+                  >
+                    {evt.date}
+                  </span>
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>—</span>
+                  <span
+                    style={{
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      color: 'var(--text-primary)'
+                    }}
+                  >
+                    {evt.title}
+                  </span>
                   <span
                     className="font-mono"
                     style={{
                       fontSize: '0.6rem',
                       padding: '2px 8px',
                       borderRadius: '999px',
-                      background: 'rgba(0, 242, 254, 0.12)',
-                      color: 'var(--accent-cyan)',
-                      border: '1px solid rgba(0, 242, 254, 0.3)',
-                      fontWeight: 600
+                      background: isUpcoming ? 'rgba(0, 242, 254, 0.12)' : 'var(--btn-secondary-bg)',
+                      color: isUpcoming ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                      border: isUpcoming ? '1px solid rgba(0, 242, 254, 0.3)' : '1px solid var(--border-subtle)',
+                      fontWeight: 700,
+                      letterSpacing: '0.08em'
                     }}
                   >
-                    UPCOMING
+                    {isUpcoming ? 'UPCOMING' : 'COMPLETED'}
                   </span>
-                )}
+                </div>
+                <div
+                  className="font-mono"
+                  style={{
+                    fontSize: '0.68rem',
+                    color: 'var(--text-muted)',
+                    marginTop: '3px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <Clock size={10} />
+                  {evt.venue}
+                </div>
               </div>
-              <div
-                className="font-mono"
-                style={{
-                  fontSize: '0.68rem',
-                  color: 'var(--text-muted)',
-                  marginTop: '2px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-              >
-                <Clock size={10} />
-                {evt.venue}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       <style>{`
-        .featured-event-hero {
+        /* Upcoming Event Card */
+        .upcoming-event-card {
           position: relative;
-          min-height: 440px;
-          display: flex;
-          flex-direction: column;
+          transition: transform 0.35s ease, border-color 0.35s ease;
         }
-        .featured-event-hero:hover .featured-event-image-box img {
-          transform: scale(1.02);
-        }
-        .featured-event-image-box {
-          position: absolute;
-          inset: 0;
-        }
-        .featured-event-image-box img {
-          position: absolute;
-          inset: 0;
-          transition: transform 0.8s ease;
-        }
-        .featured-event-content {
-          position: relative;
-          z-index: 2;
-          padding: 36px 24px;
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          flex: 1;
+        .upcoming-event-card:hover {
+          transform: translateY(-2px);
+          border-color: var(--accent-cyan) !important;
         }
 
         /* Event Chapter — Split Layout */
@@ -561,16 +541,12 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
 
         /* Timeline */
         .club-timeline {
-          max-width: 700px;
+          max-width: 720px;
         }
 
         @media (min-width: 768px) {
-          .featured-event-content {
-            padding: 56px 44px;
-            max-width: 720px;
-          }
-          .featured-event-hero {
-            min-height: 520px;
+          .upcoming-event-card {
+            padding: 36px 40px;
           }
         }
 
@@ -579,13 +555,7 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
             padding: 120px 0;
           }
           .events-header {
-            margin-bottom: 64px;
-          }
-          .featured-event-hero {
-            min-height: 560px;
-          }
-          .featured-event-content {
-            padding: 64px 56px;
+            margin-bottom: 56px;
           }
 
           /* Split Layout on desktop */
