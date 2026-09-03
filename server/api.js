@@ -6,16 +6,25 @@ import {
   authenticateAdmin,
   verifyAdminToken,
   revokeAdminToken,
-  sanitizeText
+  sanitizeText,
+  ensureDbReady
 } from './db.js';
 
-// Helper to read request body as JSON
+// Helper to read request body as JSON (handles both stream and pre-parsed)
 export async function readJsonBody(req) {
+  // Vercel serverless pre-parses the body
+  if (req.body && typeof req.body === 'object') {
+    return req.body;
+  }
+  if (typeof req.body === 'string') {
+    try { return JSON.parse(req.body); } catch { return {}; }
+  }
+
+  // Stream-based (Node HTTP server / Vite dev)
   return new Promise((resolve, reject) => {
     let body = '';
     req.on('data', (chunk) => {
       body += chunk;
-      // Guard against payloads larger than 1MB
       if (body.length > 1024 * 1024) {
         reject(new Error('Payload too large'));
       }
@@ -33,16 +42,24 @@ export async function readJsonBody(req) {
 }
 
 // Helper to send JSON response
-function sendJson(res, statusCode, data) {
+export function sendJson(res, statusCode, data) {
+  // Vercel serverless uses res.status().json() pattern
+  if (typeof res.status === 'function' && typeof res.json === 'function') {
+    return res.status(statusCode).json(data);
+  }
+  // Node http.ServerResponse
   res.statusCode = statusCode;
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');
   res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.end(JSON.stringify(data));
 }
 
 // Helper to extract bearer token
 function getBearerToken(req) {
-  const authHeader = req.headers['authorization'];
+  const authHeader = req.headers['authorization'] || req.headers['Authorization'];
   if (authHeader && authHeader.startsWith('Bearer ')) {
     return authHeader.substring(7).trim();
   }
@@ -50,11 +67,7 @@ function getBearerToken(req) {
 }
 
 const VALID_BRANCHES = [
-  'CSE',
-  'ECE',
-  'ME',
-  'CE',
-  'EE',
+  'CSE', 'ECE', 'ME', 'CE', 'EE',
   'CSE — Computer Science and Engineering',
   'ECE — Electronics and Communication Engineering',
   'ME — Mechanical Engineering',
@@ -69,18 +82,25 @@ const VALID_SUBJECTS = ['Physics', 'Chemistry', 'Mathematics', 'Other'];
  * Returns true if the request was handled, false otherwise
  */
 export async function handleApiRequest(req, res) {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  const url = req.url || '/';
+  const parsedUrl = new URL(url, `http://${req.headers.host || 'localhost'}`);
   const pathname = parsedUrl.pathname;
 
-  // Handle CORS preflight if ever called cross-origin
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (typeof res.status === 'function') {
+      return res.status(204).end();
+    }
     res.statusCode = 204;
     res.end();
     return true;
   }
+
+  // Ensure database is initialized
+  await ensureDbReady();
 
   // 1. POST /api/register
   if (pathname === '/api/register' && req.method === 'POST') {
@@ -142,7 +162,7 @@ export async function handleApiRequest(req, res) {
       }
 
       // Persist to database
-      const result = saveRegistration({
+      const result = await saveRegistration({
         name,
         sicNo,
         branch,
@@ -180,6 +200,7 @@ export async function handleApiRequest(req, res) {
       }
       return true;
     } catch (err) {
+      console.error('[API] Error in /api/admin/login:', err);
       sendJson(res, 500, { success: false, message: 'Admin authentication failed' });
       return true;
     }
@@ -205,8 +226,8 @@ export async function handleApiRequest(req, res) {
     const branch = parsedUrl.searchParams.get('branch') || '';
     const subject = parsedUrl.searchParams.get('subject') || '';
 
-    const records = getRegistrations({ search, branch, subject });
-    const stats = getStats();
+    const records = await getRegistrations({ search, branch, subject });
+    const stats = await getStats();
 
     sendJson(res, 200, {
       success: true,
@@ -225,7 +246,7 @@ export async function handleApiRequest(req, res) {
       return true;
     }
 
-    const stats = getStats();
+    const stats = await getStats();
     sendJson(res, 200, { success: true, stats });
     return true;
   }
@@ -238,9 +259,14 @@ export async function handleApiRequest(req, res) {
       return true;
     }
 
-    const csvContent = exportCSV();
+    const csvContent = await exportCSV();
     const filename = `silicon_quiz_club_registrations_${new Date().toISOString().split('T')[0]}.csv`;
 
+    if (typeof res.status === 'function') {
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      return res.status(200).send(csvContent);
+    }
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
