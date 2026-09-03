@@ -358,21 +358,21 @@ export const CLUB_MEMBERS: ClubMember[] = [
   },
   {
     id: 'snr-ujjwal',
-    name: 'Ujjwal',
+    name: 'Ujjwal Kumar Pandey',
     designation: 'SENIOR COORDINATOR',
     tier: 'senior_coordinator',
     image: '/assets/images/Members/Ujjwal Kumar Pandey.png'
   },
   {
     id: 'snr-sneha',
-    name: 'Sneha',
+    name: 'Sneha Rout Ray',
     designation: 'SENIOR COORDINATOR',
     tier: 'senior_coordinator',
     image: '/assets/images/Members/Sneha Rout Ray.jpeg'
   },
   {
     id: 'snr-aakriti',
-    name: 'Aakriti',
+    name: 'Aakriti Priya Pandit',
     designation: 'SENIOR COORDINATOR',
     tier: 'senior_coordinator',
     image: '/assets/images/Members/Aakriti Priya Pandit.png'
@@ -381,21 +381,21 @@ export const CLUB_MEMBERS: ClubMember[] = [
   // TIER 05 & 06 — COORDINATORS
   {
     id: 'coord-rakesh',
-    name: 'Rakesh',
+    name: 'Rakesh Barik',
     designation: 'COORDINATOR',
     tier: 'coordinator',
     image: '/assets/images/Members/Rakesh barik.jpeg'
   },
   {
-    id: 'coord-baishnavi',
-    name: 'Baishnavi',
+    id: 'coord-baishnabi',
+    name: 'Baishnabi Bidyadhar',
     designation: 'COORDINATOR',
     tier: 'coordinator',
     image: '/assets/images/Members/Baishnabi Bidyadhar.jpeg'
   },
   {
     id: 'coord-rahul',
-    name: 'Rahul',
+    name: 'Rahul Pattnaik',
     designation: 'COORDINATOR',
     tier: 'coordinator',
     image: '/assets/images/Members/Rahul Pattnaik.jpeg'

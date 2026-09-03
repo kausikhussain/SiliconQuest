@@ -306,30 +306,7 @@ export const TeamSection: React.FC = () => {
                     background: 'linear-gradient(to top, rgba(7, 9, 14, 0.75) 0%, transparent 50%)'
                   }}
                 />
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '14px',
-                    left: '14px',
-                    padding: '4px 10px',
-                    borderRadius: '999px',
-                    background: 'rgba(7, 9, 14, 0.85)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(0, 242, 254, 0.3)'
-                  }}
-                >
-                  <span
-                    className="font-mono"
-                    style={{
-                      fontSize: '0.65rem',
-                      color: 'var(--accent-cyan)',
-                      letterSpacing: '0.12em',
-                      fontWeight: 700
-                    }}
-                  >
-                    LEADERSHIP
-                  </span>
-                </div>
+
               </div>
 
               <div
@@ -415,30 +392,7 @@ export const TeamSection: React.FC = () => {
                     background: 'linear-gradient(to top, rgba(7, 9, 14, 0.75) 0%, transparent 50%)'
                   }}
                 />
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '14px',
-                    left: '14px',
-                    padding: '4px 10px',
-                    borderRadius: '999px',
-                    background: 'rgba(7, 9, 14, 0.85)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(0, 242, 254, 0.3)'
-                  }}
-                >
-                  <span
-                    className="font-mono"
-                    style={{
-                      fontSize: '0.65rem',
-                      color: 'var(--accent-cyan)',
-                      letterSpacing: '0.12em',
-                      fontWeight: 700
-                    }}
-                  >
-                    LEADERSHIP
-                  </span>
-                </div>
+
               </div>
 
               <div
