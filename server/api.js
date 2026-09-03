@@ -7,7 +7,9 @@ import {
   verifyAdminToken,
   revokeAdminToken,
   sanitizeText,
-  ensureDbReady
+  ensureDbReady,
+  isPostgresReady,
+  hasDbConnectionUrl
 } from './db.js';
 
 // Helper to read request body as JSON (handles both stream and pre-parsed)
@@ -242,11 +244,17 @@ export async function handleApiRequest(req, res) {
     const records = await getRegistrations({ search, branch, subject, sort });
     const stats = await getStats();
 
+    const dbStatus = isPostgresReady()
+      ? 'PostgreSQL (Cloud Database Connected)'
+      : (hasDbConnectionUrl() ? 'PostgreSQL Connecting...' : 'Standalone Serverless Cache');
+
     sendJson(res, 200, {
       success: true,
       total: records.length,
       registrations: records,
-      stats
+      stats,
+      dbStatus,
+      isCloudDatabase: isPostgresReady()
     });
     return true;
   }
@@ -260,7 +268,16 @@ export async function handleApiRequest(req, res) {
     }
 
     const stats = await getStats();
-    sendJson(res, 200, { success: true, stats });
+    const dbStatus = isPostgresReady()
+      ? 'PostgreSQL (Cloud Database Connected)'
+      : (hasDbConnectionUrl() ? 'PostgreSQL Connecting...' : 'Standalone Serverless Cache');
+
+    sendJson(res, 200, {
+      success: true,
+      stats,
+      dbStatus,
+      isCloudDatabase: isPostgresReady()
+    });
     return true;
   }
 

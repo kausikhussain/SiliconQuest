@@ -24,7 +24,6 @@ export const ADMIN_PASSKEY = process.env.QUIZ_CLUB_ADMIN_PASSKEY || 'Silicon@Qui
 const HMAC_SECRET = process.env.QUIZ_CLUB_HMAC_SECRET || ADMIN_PASSKEY + '_hmac_key_2026';
 const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
-// ─── PostgreSQL Support ───────────────────────────────────────────────
 let pgPool = null;
 let pgReady = false;
 
@@ -37,6 +36,14 @@ const DB_CONN_URL =
   process.env.STORAGE_DATABASE_URL ||
   process.env.POSTGRES_PRISMA_URL ||
   process.env.POSTGRES_URL_NON_POOLING;
+
+export function isPostgresReady() {
+  return pgReady;
+}
+
+export function hasDbConnectionUrl() {
+  return !!DB_CONN_URL;
+}
 
 async function initPostgres() {
   if (!DB_CONN_URL) return false;

@@ -60,6 +60,8 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   // Dashboard data state
   const [registrations, setRegistrations] = useState<StudentRegistration[]>([]);
   const [stats, setStats] = useState<StatsData | null>(null);
+  const [dbStatus, setDbStatus] = useState<string>('');
+  const [isCloudDb, setIsCloudDb] = useState<boolean>(false);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [fetchError, setFetchError] = useState('');
 
@@ -103,6 +105,8 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
 
         setRegistrations(apiResult.data.registrations || []);
         setStats(apiResult.data.stats || null);
+        if (apiResult.data.dbStatus) setDbStatus(apiResult.data.dbStatus);
+        if (typeof apiResult.data.isCloudDatabase === 'boolean') setIsCloudDb(apiResult.data.isCloudDatabase);
       } catch (err: any) {
         setFetchError(err.message || 'Error loading registration records');
       } finally {
@@ -526,6 +530,12 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                 </div>
                 <div className="font-display" style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   {stats ? stats.total : registrations.length}
+                </div>
+                <div style={{ marginTop: '6px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.68rem', fontFamily: 'var(--font-mono)' }}>
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: isCloudDb ? '#10b981' : '#f59e0b', display: 'inline-block' }} />
+                  <span style={{ color: isCloudDb ? '#10b981' : 'var(--text-muted)' }}>
+                    {dbStatus || (isCloudDb ? 'PostgreSQL Cloud Connected' : 'Serverless Storage')}
+                  </span>
                 </div>
               </div>
 
