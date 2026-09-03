@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node server/server.js",
+    "start": "node server/server.js",
+    "clear:data": "node server/clear-registrations.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
