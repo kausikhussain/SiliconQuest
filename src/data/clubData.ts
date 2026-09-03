@@ -4,10 +4,10 @@ export const CLUB_INFO = {
   name: 'SILICON QUIZ CLUB',
   shortName: 'SQC',
   tagline: 'WHERE CURIOSITY MEETS COMPETITION',
-  institution: 'Silicon Institute of Technology / Silicon University',
+  institution: 'Silicon Institute of Technology, Sambalpur, Odisha',
   motto: 'LESS · BETTER · BOLDER · SMARTER',
   established: '2018',
-  description: 'The premier intellectual society and high-velocity competitive quiz syndicate of Silicon University. We cultivate analytical agility, multidisciplinary lateral thinking, and competitive excellence through arena-scale championships and razor-sharp knowledge sessions.',
+  description: 'The premier intellectual society and high-velocity competitive quiz syndicate of Silicon Institute of Technology, Sambalpur, Odisha. We cultivate analytical agility, multidisciplinary lateral thinking, and competitive excellence through arena-scale championships and razor-sharp knowledge sessions.',
   manifesto: [
     {
       title: 'THE PURSUIT OF UNKNOWN',
@@ -63,7 +63,7 @@ export const CLUB_EVENTS: ClubEvent[] = [
     edition: 'Winter League Season 4',
     date: 'ARCHIVED · FEB 2025',
     category: 'National Championship',
-    location: 'Auditorium Hall, Silicon University',
+    location: 'Auditorium Hall, Silicon Institute of Technology, Sambalpur',
     venue: 'Stage One Arena',
     description: 'An adrenaline-fueled speed league featuring rapid-fire visual connect rounds, clock calculations, and high-pressure planetary trivia witnessed by a packed house.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.39.09 AM.jpeg',
@@ -222,7 +222,7 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
   },
   {
     id: 'gal-12',
-    title: 'Silicon University Official Podium Address',
+    title: 'Silicon Institute of Technology Official Podium Address',
     category: 'live-stage',
     categoryLabel: 'Stage Master',
     src: '/assets/images/WhatsApp Image 2026-08-23 at 12.49.07 AM.jpeg',
@@ -313,7 +313,7 @@ export const TEAM_PROFILES: TeamProfile[] = [
     role: 'Club President / Chief Quizmaster',
     title: 'Lead Architect, Brainblast & College League',
     specialty: ['Pop Culture Connects', 'Geopolitics', 'Arena Direction'],
-    bio: 'Directs the flagship tournament formats and hosts arena-scale quiz events at Silicon University. Passionate about transforming obscure knowledge into electrifying storytelling.',
+    bio: 'Directs the flagship tournament formats and hosts arena-scale quiz events at Silicon Institute of Technology, Sambalpur. Passionate about transforming obscure knowledge into electrifying storytelling.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.49.07 AM.jpeg',
     socials: {
       linkedin: 'https://linkedin.com',
@@ -336,10 +336,10 @@ export const TEAM_PROFILES: TeamProfile[] = [
   {
     id: 'advisor-1',
     name: 'Faculty Mentor & Advisory Board',
-    role: 'Faculty Advisor, Silicon University',
+    role: 'Faculty Advisor, Silicon Institute of Technology, Sambalpur',
     title: 'Department of Applied Sciences & Humanities',
     specialty: ['Academic Oversight', 'Tournament Sanctioning', 'Student Mentorship'],
-    bio: 'Provides institutional guidance and mentorship to Silicon Quiz Club, supporting inter-college participation, student excellence, and academic enrichment across campuses.',
+    bio: 'Provides institutional guidance and mentorship to Silicon Quiz Club, supporting student excellence, placement aptitude readiness, and academic enrichment.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.32 AM.jpeg',
     socials: {
       email: 'faculty.quiz@silicon.ac.in'

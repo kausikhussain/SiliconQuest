@@ -132,7 +132,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onLoginSuccess }) => {
             }}
           >
             <Sparkles size={11} />
-            <span>SILICON UNIVERSITY · AUTHENTICATION</span>
+            <span>SILICON INSTITUTE OF TECHNOLOGY · AUTHENTICATION</span>
           </div>
 
           <h1
@@ -308,7 +308,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onLoginSuccess }) => {
             color: 'var(--text-muted)'
           }}
         >
-          SAMBALPUR & BHUBANESWAR CAMPUSES · SILICON UNIVERSITY
+          SILICON INSTITUTE OF TECHNOLOGY, SAMBALPUR, ODISHA
         </div>
       </div>
 

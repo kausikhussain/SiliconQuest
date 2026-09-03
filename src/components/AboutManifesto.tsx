@@ -88,7 +88,7 @@ export const AboutManifesto: React.FC = () => {
                 letterSpacing: '0.08em'
               }}
             >
-              ESTABLISHED 2018 · SAMBALPUR & BHUBANESWAR CAMPUS
+              ESTABLISHED 2018 · SILICON INSTITUTE OF TECHNOLOGY, SAMBALPUR, ODISHA
             </p>
           </div>
         </div>

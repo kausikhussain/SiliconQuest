@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowUp } from 'lucide-react';
+import { ArrowUp, Lock } from 'lucide-react';
 import { sound } from '../utils/soundEngine';
 
-export const Footer: React.FC = () => {
+interface FooterProps {
+  onOpenAdminModal?: () => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onOpenAdminModal }) => {
   const [time, setTime] = useState('');
 
   useEffect(() => {
@@ -31,31 +35,37 @@ export const Footer: React.FC = () => {
   return (
     <footer
       style={{
-        backgroundColor: 'var(--bg-surface)',
-        borderTop: '1px solid var(--border-subtle)',
-        padding: '60px 0 calc(32px + var(--sab))',
         position: 'relative',
-        zIndex: 10
+        zIndex: 10,
+        backgroundColor: 'var(--bg-primary)',
+        borderTop: '1px solid var(--border-subtle)',
+        padding: 'calc(60px + var(--sat)) calc(16px + var(--sar)) calc(40px + var(--sab)) calc(16px + var(--sal))'
       }}
-      className="footer-main-container"
     >
-      <div className="section-container">
-        {/* Top Grid */}
+      <div
+        style={{
+          maxWidth: '1280px',
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '48px'
+        }}
+      >
+        {/* Main Grid: Identity, Campus, and Directory */}
         <div
           style={{
             display: 'grid',
-            gap: '36px',
-            marginBottom: '48px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: '40px'
           }}
-          className="footer-top-grid"
         >
-          {/* Brand & Manifesto Column */}
-          <div style={{ maxWidth: '420px' }}>
+          {/* Identity & Mission */}
+          <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <div
                 style={{
-                  width: '28px',
-                  height: '28px',
+                  width: '32px',
+                  height: '32px',
                   position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
@@ -69,6 +79,7 @@ export const Footer: React.FC = () => {
                     fill="none"
                     stroke="var(--accent-cyan)"
                     strokeWidth="8"
+                    strokeLinecap="round"
                   />
                   <polygon
                     points="50,25 75,40 75,60 50,75 25,60 25,40"
@@ -99,7 +110,8 @@ export const Footer: React.FC = () => {
                 marginBottom: '20px'
               }}
             >
-              The definitive competitive quiz society of Silicon Institute of Technology & Silicon University. Cultivating lateral intellect, analytical speed, and championship honors.
+              The definitive competitive quiz society of Silicon Institute of Technology, Sambalpur, Odisha. Cultivating
+              lateral intellect, analytical speed, and championship honors.
             </p>
 
             <div
@@ -129,7 +141,7 @@ export const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Institutional Coordinates */}
+          {/* Institutional Location */}
           <div>
             <span
               className="font-mono"
@@ -142,7 +154,7 @@ export const Footer: React.FC = () => {
                 marginBottom: '16px'
               }}
             >
-              INSTITUTIONAL CAMPUSES
+              INSTITUTIONAL LOCATION
             </span>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -151,30 +163,17 @@ export const Footer: React.FC = () => {
                   style={{
                     display: 'block',
                     color: 'var(--text-primary)',
-                    fontSize: '0.85rem',
-                    marginBottom: '2px'
+                    fontSize: '0.88rem',
+                    marginBottom: '4px'
                   }}
                 >
                   Silicon Institute of Technology, Sambalpur
                 </strong>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.45 }}>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', lineHeight: 1.5 }}>
                   Silicon West, Sason, Sambalpur, Odisha — 768200
                 </p>
-              </div>
-
-              <div>
-                <strong
-                  style={{
-                    display: 'block',
-                    color: 'var(--text-primary)',
-                    fontSize: '0.85rem',
-                    marginBottom: '2px'
-                  }}
-                >
-                  Silicon University, Bhubaneswar
-                </strong>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', lineHeight: 1.45 }}>
-                  Silicon Hills, Patia, Bhubaneswar, Odisha — 751024
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.78rem', marginTop: '6px', fontFamily: 'var(--font-mono)' }}>
+                  Affiliated to BPUT, Odisha · AICTE Approved
                 </p>
               </div>
             </div>
@@ -223,6 +222,35 @@ export const Footer: React.FC = () => {
                   </a>
                 </li>
               ))}
+
+              {/* Admin Portal Trigger in Footer */}
+              {onOpenAdminModal && (
+                <li style={{ marginTop: '6px' }}>
+                  <button
+                    onClick={() => {
+                      sound.playClick();
+                      onOpenAdminModal();
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: 'var(--accent-cyan)',
+                      fontSize: '0.825rem',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      fontFamily: 'var(--font-mono)'
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.textDecoration = 'underline')}
+                    onMouseLeave={(e) => (e.currentTarget.style.textDecoration = 'none')}
+                  >
+                    <Lock size={12} />
+                    <span>08 · Club Admin Portal</span>
+                  </button>
+                </li>
+              )}
             </ul>
           </div>
         </div>
@@ -242,12 +270,12 @@ export const Footer: React.FC = () => {
           <p
             className="font-mono"
             style={{
-              fontSize: '0.7rem',
+              fontSize: '0.72rem',
               color: 'var(--text-muted)',
               lineHeight: 1.5
             }}
           >
-            © 2026 SILICON QUIZ CLUB. SILICON INSTITUTE OF TECHNOLOGY & SILICON UNIVERSITY.
+            © 2026 SILICON QUIZ CLUB. SILICON INSTITUTE OF TECHNOLOGY, SAMBALPUR, ODISHA.
           </p>
 
           <button
@@ -268,34 +296,21 @@ export const Footer: React.FC = () => {
               transition: 'all 0.2s ease',
               minHeight: '36px'
             }}
-            onMouseEnter={() => sound.playHover()}
+            onMouseEnter={(e) => {
+              sound.playHover();
+              e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+              e.currentTarget.style.color = 'var(--accent-cyan)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = 'var(--border-subtle)';
+              e.currentTarget.style.color = 'var(--text-secondary)';
+            }}
           >
             <span>BACK TO TOP</span>
-            <ArrowUp size={12} />
+            <ArrowUp size={13} />
           </button>
         </div>
       </div>
-
-      <style>{`
-        .footer-top-grid {
-          grid-template-columns: 1fr;
-        }
-        @media (min-width: 640px) {
-          .footer-top-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-        }
-        @media (min-width: 1024px) {
-          .footer-main-container {
-            padding: 100px 0 40px;
-          }
-          .footer-top-grid {
-            grid-template-columns: repeat(3, 1fr);
-            gap: 48px;
-            margin-bottom: 80px;
-          }
-        }
-      `}</style>
     </footer>
   );
 };

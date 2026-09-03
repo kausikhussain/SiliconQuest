@@ -4,7 +4,7 @@ export interface ClubEvent {
   subtitle: string;
   date: string;
   edition: string;
-  category: 'Flagship League' | 'National Championship' | 'Aptitude Challenge' | 'Intra-University' | 'Special Edition';
+  category: 'Flagship League' | 'National Championship' | 'Aptitude Challenge' | 'Intra-Institute' | 'Special Edition';
   location: string;
   venue: string;
   description: string;

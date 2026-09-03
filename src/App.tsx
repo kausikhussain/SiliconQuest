@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { LoginPortal } from './components/LoginPortal';
 import { ScrollScrubIntro } from './components/ScrollScrubIntro';
 import { Navigation } from './components/Navigation';
 import { HeroSection } from './components/HeroSection';
@@ -10,26 +9,12 @@ import { PodiumLeaderboard } from './components/PodiumLeaderboard';
 import { EditorialGallery } from './components/EditorialGallery';
 import { TeamSection } from './components/TeamSection';
 import { KnowledgeVault } from './components/KnowledgeVault';
-import { JoinModal } from './components/JoinModal';
+import { RegistrationModal } from './components/RegistrationModal';
+import { AdminDashboardModal } from './components/AdminDashboardModal';
 import { CustomCursor } from './components/CustomCursor';
 import { Footer } from './components/Footer';
 
-interface UserData {
-  name: string;
-  sicId: string;
-  role: string;
-}
-
 export const App: React.FC = () => {
-  const [user, setUser] = useState<UserData | null>(() => {
-    try {
-      const saved = sessionStorage.getItem('sqc_user_session');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
-
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const saved = localStorage.getItem('sqc_theme');
@@ -40,6 +25,7 @@ export const App: React.FC = () => {
   });
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -48,17 +34,6 @@ export const App: React.FC = () => {
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
-  };
-
-  const handleLoginSuccess = (userData: UserData) => {
-    setUser(userData);
-    sessionStorage.setItem('sqc_user_session', JSON.stringify(userData));
-    window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior });
-  };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem('sqc_user_session');
-    setUser(null);
   };
 
   const handleReplayIntro = () => {
@@ -72,16 +47,6 @@ export const App: React.FC = () => {
     }
   };
 
-  // If not authenticated, display the Login / Access Portal
-  if (!user) {
-    return (
-      <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
-        <CustomCursor />
-        <LoginPortal onLoginSuccess={handleLoginSuccess} />
-      </div>
-    );
-  }
-
   return (
     <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: 'var(--bg-primary)' }}>
       {/* Background Ambience Layers */}
@@ -91,16 +56,15 @@ export const App: React.FC = () => {
       {/* Custom Magnetic Cursor */}
       <CustomCursor />
 
-      {/* 01 — FULLSCREEN POST-LOGIN TRUE SCROLL-SCRUBBED INTRO */}
+      {/* 01 — FULLSCREEN TRUE SCROLL-SCRUBBED INTRO */}
       <ScrollScrubIntro onSkip={handleSkipIntro} />
 
       {/* Navigation (Sticky & Fixed on Homepage) */}
       <Navigation
-        user={user}
         theme={theme}
         onToggleTheme={toggleTheme}
-        onLogout={handleLogout}
         onOpenJoinModal={() => setIsJoinModalOpen(true)}
+        onOpenAdminModal={() => setIsAdminModalOpen(true)}
         onReplayIntro={handleReplayIntro}
       />
 
@@ -132,14 +96,20 @@ export const App: React.FC = () => {
           <KnowledgeVault />
         </main>
 
-        {/* 11 — FOOTER */}
-        <Footer />
+        {/* 10 — FOOTER */}
+        <Footer onOpenAdminModal={() => setIsAdminModalOpen(true)} />
       </div>
 
-      {/* 10 — JOIN CLUB / AUDITION MODAL */}
-      <JoinModal
+      {/* 11 — OFFICIAL QUIZ CLUB REGISTRATION MODAL */}
+      <RegistrationModal
         isOpen={isJoinModalOpen}
         onClose={() => setIsJoinModalOpen(false)}
+      />
+
+      {/* 12 — PROTECTED CLUB ADMIN DASHBOARD */}
+      <AdminDashboardModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
       />
     </div>
   );

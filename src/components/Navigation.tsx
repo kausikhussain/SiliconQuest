@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, VolumeX, Menu, X, Sparkles, RotateCcw, LogOut, UserCheck, Sun, Moon, ArrowRight } from 'lucide-react';
+import { Volume2, VolumeX, Menu, X, Sparkles, RotateCcw, LogOut, UserCheck, Sun, Moon, ArrowRight, Lock } from 'lucide-react';
 import { sound } from '../utils/soundEngine';
 
 interface NavigationProps {
   onOpenJoinModal: () => void;
+  onOpenAdminModal?: () => void;
   onReplayIntro: () => void;
   user?: { name: string; sicId: string; role: string } | null;
   onLogout?: () => void;
@@ -13,6 +14,7 @@ interface NavigationProps {
 
 export const Navigation: React.FC<NavigationProps> = ({
   onOpenJoinModal,
+  onOpenAdminModal,
   onReplayIntro,
   user,
   onLogout,
@@ -362,6 +364,44 @@ export const Navigation: React.FC<NavigationProps> = ({
               </button>
             )}
 
+            {/* Admin Console Access Button (Desktop) */}
+            {onOpenAdminModal && (
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  onOpenAdminModal();
+                }}
+                title="Quiz Club Admin Management Console"
+                aria-label="Admin Portal"
+                style={{
+                  background: 'var(--btn-secondary-bg)',
+                  border: '1px solid var(--border-subtle)',
+                  color: 'var(--text-muted)',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '50%',
+                  display: 'none',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  flexShrink: 0
+                }}
+                className="desktop-admin-btn"
+                onMouseEnter={(e) => {
+                  sound.playHover();
+                  e.currentTarget.style.color = 'var(--accent-cyan)';
+                  e.currentTarget.style.borderColor = 'var(--accent-cyan)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--text-muted)';
+                  e.currentTarget.style.borderColor = 'var(--border-subtle)';
+                }}
+              >
+                <Lock size={15} />
+              </button>
+            )}
+
             {/* Join Club Primary CTA (Desktop and Large screens) */}
             <button
               onClick={() => {
@@ -378,7 +418,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               onMouseEnter={() => sound.playHover()}
             >
               <Sparkles size={13} />
-              JOIN CLUB
+              JOIN QUIZ CLUB
             </button>
 
             {/* Mobile Menu Toggle Button (>=44px touch target) */}
@@ -524,7 +564,7 @@ export const Navigation: React.FC<NavigationProps> = ({
               style={{ width: '100%', padding: '14px', fontSize: '0.85rem' }}
             >
               <Sparkles size={16} />
-              <span>JOIN THE CLUB / AUDITIONS</span>
+              <span>JOIN QUIZ CLUB</span>
             </button>
 
             {/* Mobile Utility Controls Row */}
@@ -568,6 +608,32 @@ export const Navigation: React.FC<NavigationProps> = ({
                 <span>REPLAY INTRO</span>
               </button>
             </div>
+
+            {/* Admin Console Access in Mobile Menu */}
+            {onOpenAdminModal && (
+              <button
+                onClick={() => {
+                  sound.playClick();
+                  setIsMobileMenuOpen(false);
+                  onOpenAdminModal();
+                }}
+                className="btn-secondary"
+                style={{
+                  width: '100%',
+                  padding: '11px',
+                  fontSize: '0.75rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '6px',
+                  borderColor: 'rgba(0, 242, 254, 0.25)',
+                  color: 'var(--accent-cyan)'
+                }}
+              >
+                <Lock size={14} />
+                <span>QUIZ CLUB ADMIN PORTAL</span>
+              </button>
+            )}
 
             {onLogout && (
               <button
@@ -618,6 +684,9 @@ export const Navigation: React.FC<NavigationProps> = ({
           }
           .desktop-join-btn {
             display: inline-flex !important;
+          }
+          .desktop-admin-btn {
+            display: flex !important;
           }
           .desktop-logout-btn {
             display: flex !important;
