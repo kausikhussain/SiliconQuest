@@ -128,12 +128,12 @@ export async function handleApiRequest(req, res) {
         errors.push('A valid branch must be selected (CSE, ECE, ME, CE, EE).');
       }
 
-      const tenth = Number(data.tenthPercentage);
+      const tenth = Number(String(data.tenthPercentage || '').replace(/%/g, '').trim());
       if (isNaN(tenth) || tenth < 0 || tenth > 100) {
         errors.push('10th Result percentage must be a valid number between 0 and 100.');
       }
 
-      const twelfth = Number(data.twelfthPercentage);
+      const twelfth = Number(String(data.twelfthPercentage || '').replace(/%/g, '').trim());
       if (isNaN(twelfth) || twelfth < 0 || twelfth > 100) {
         errors.push('12th Result percentage must be a valid number between 0 and 100.');
       }

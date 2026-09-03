@@ -94,9 +94,10 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
         }
         break;
       case 'tenthPercentage': {
-        const num = Number(value);
+        const cleaned = String(value || '').replace(/%/g, '').trim();
+        const num = Number(cleaned);
         if (value === '' || isNaN(num)) {
-          return '10th percentage is required.';
+          return '10th percentage is required (e.g. 92.5).';
         }
         if (num < 0 || num > 100) {
           return '10th percentage must be between 0 and 100.';
@@ -104,9 +105,10 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
         break;
       }
       case 'twelfthPercentage': {
-        const num = Number(value);
+        const cleaned = String(value || '').replace(/%/g, '').trim();
+        const num = Number(cleaned);
         if (value === '' || isNaN(num)) {
-          return '12th percentage is required.';
+          return '12th percentage is required (e.g. 88.0).';
         }
         if (num < 0 || num > 100) {
           return '12th percentage must be between 0 and 100.';
@@ -196,8 +198,8 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
           name: formData.name,
           sicNo: formData.sicNo,
           branch: formData.branch,
-          tenthPercentage: parseFloat(formData.tenthPercentage),
-          twelfthPercentage: parseFloat(formData.twelfthPercentage),
+          tenthPercentage: parseFloat(String(formData.tenthPercentage).replace(/%/g, '').trim()),
+          twelfthPercentage: parseFloat(String(formData.twelfthPercentage).replace(/%/g, '').trim()),
           interestedSubject: formData.interestedSubject,
           otherSubject: formData.otherSubject,
           declarationAccepted: formData.declarationAccepted
