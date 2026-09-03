@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Trophy, Users, Zap, Compass, Award, Sparkles } from 'lucide-react';
+import { Trophy, Users, Zap, Compass, Award, Sparkles } from 'lucide-react';
 import { Hero3DCanvas } from './Hero3DCanvas';
 import { CLUB_INFO } from '../data/clubData';
 import { sound } from '../utils/soundEngine';
@@ -100,7 +100,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
           <h1
             className="font-display"
             style={{
-              fontSize: 'clamp(2.6rem, 8.5vw, 6.4rem)',
+              fontSize: 'clamp(2.35rem, 8vw, 5.8rem)',
               fontWeight: 800,
               lineHeight: 0.98,
               letterSpacing: '-0.04em',
@@ -165,8 +165,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
             className="hero-action-buttons"
           >
             <button
+              onClick={() => {
+                sound.playClick();
+                onOpenJoinModal();
+              }}
+              className="btn-cyan hero-btn"
+              onMouseEnter={() => sound.playHover()}
+            >
+              <Sparkles size={16} />
+              <span>JOIN QUIZ CLUB</span>
+            </button>
+
+            <button
               onClick={() => scrollToSection('#events')}
-              className="btn-primary hero-btn"
+              className="btn-secondary hero-btn"
               onMouseEnter={() => sound.playHover()}
             >
               <Compass size={16} />
@@ -180,35 +192,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenJoinModal, theme
             >
               <Award size={16} />
               <span>HALL OF FAME</span>
-            </button>
-
-            <button
-              onClick={() => {
-                sound.playClick();
-                onOpenJoinModal();
-              }}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--accent-cyan)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.825rem',
-                fontWeight: 600,
-                letterSpacing: '0.06em',
-                cursor: 'pointer',
-                padding: '10px 14px',
-                textTransform: 'uppercase',
-                minHeight: '44px'
-              }}
-              className="hero-audition-btn"
-              onMouseEnter={() => sound.playHover()}
-            >
-              <span>JOIN QUIZ CLUB</span>
-              <ArrowRight size={14} />
             </button>
           </div>
 

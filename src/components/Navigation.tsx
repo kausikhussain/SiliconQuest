@@ -50,6 +50,17 @@ export const Navigation: React.FC<NavigationProps> = ({
     };
   }, [isMobileMenuOpen]);
 
+  // Keyboard accessibility: dismiss mobile menu on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMobileMenuOpen]);
+
   const toggleAudio = () => {
     const nextState = sound.toggleMute();
     setIsAudioOn(nextState);
@@ -157,11 +168,12 @@ export const Navigation: React.FC<NavigationProps> = ({
               <span
                 className="font-display"
                 style={{
-                  fontSize: '0.95rem',
+                  fontSize: 'clamp(0.82rem, 3.8vw, 0.95rem)',
                   fontWeight: 800,
                   letterSpacing: '0.03em',
                   color: 'var(--text-primary)',
-                  lineHeight: 1.15
+                  lineHeight: 1.15,
+                  whiteSpace: 'nowrap'
                 }}
               >
                 SILICON <span style={{ color: 'var(--accent-cyan)' }}>QUIZ</span>
@@ -257,8 +269,10 @@ export const Navigation: React.FC<NavigationProps> = ({
                   background: 'var(--btn-secondary-bg)',
                   border: '1px solid var(--border-subtle)',
                   color: 'var(--text-secondary)',
-                  width: '38px',
-                  height: '38px',
+                  width: '40px',
+                  height: '40px',
+                  minWidth: '40px',
+                  minHeight: '40px',
                   borderRadius: '50%',
                   display: 'flex',
                   alignItems: 'center',
@@ -269,7 +283,7 @@ export const Navigation: React.FC<NavigationProps> = ({
                 }}
                 onMouseEnter={() => sound.playHover()}
               >
-                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+                {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
               </button>
             )}
 
@@ -432,11 +446,13 @@ export const Navigation: React.FC<NavigationProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                width: '42px',
-                height: '42px',
-                background: isMobileMenuOpen ? 'var(--accent-cyan-glow)' : 'var(--btn-secondary-bg)',
-                border: `1px solid ${isMobileMenuOpen ? 'var(--border-accent)' : 'var(--border-subtle)'}`,
+                width: '40px',
+                height: '40px',
+                minWidth: '40px',
+                minHeight: '40px',
                 borderRadius: '10px',
+                background: isMobileMenuOpen ? 'var(--accent-cyan-glow)' : 'var(--btn-secondary-bg)',
+                border: `1px solid ${isMobileMenuOpen ? 'var(--accent-cyan)' : 'var(--border-subtle)'}`,
                 color: isMobileMenuOpen ? 'var(--accent-cyan)' : 'var(--text-primary)',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',

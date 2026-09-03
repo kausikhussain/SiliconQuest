@@ -63,6 +63,21 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
   const [realtimeToast, setRealtimeToast] = useState<{ message: string; timestamp: number } | null>(null);
   const [isClearing, setIsClearing] = useState(false);
 
+  // Keyboard accessibility: dismiss admin modal or dossier on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        if (selectedStudent) {
+          setSelectedStudent(null);
+        } else {
+          onClose();
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, selectedStudent, onClose]);
+
   const fetchRegistrations = useCallback(
     async (authToken: string) => {
       setIsLoadingData(true);
@@ -902,8 +917,9 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
               </div>
             )}
 
-            {/* Registrations Data Table */}
+            {/* Registrations Data Table (Desktop View >= 768px) */}
             <div
+              className="admin-desktop-table-view"
               style={{
                 borderRadius: '14px',
                 border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -1081,6 +1097,189 @@ export const AdminDashboardModal: React.FC<AdminDashboardModalProps> = ({ isOpen
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Registrations Responsive Cards (Mobile View < 768px) */}
+            <div className="admin-mobile-cards-view">
+              {registrations.length === 0 ? (
+                <div
+                  style={{
+                    padding: '40px 16px',
+                    textAlign: 'center',
+                    color: 'var(--text-muted)',
+                    background: 'var(--form-section-bg)',
+                    borderRadius: '16px',
+                    border: '1px solid var(--form-section-border)'
+                  }}
+                >
+                  {isLoadingData ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                      <RotateCw size={26} className="spin" style={{ color: 'var(--accent-cyan)' }} />
+                      <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 500 }}>
+                        Fetching institutional registrations...
+                      </span>
+                    </div>
+                  ) : fetchError ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                      <AlertCircle size={32} style={{ color: '#f87171' }} />
+                      <p style={{ color: '#f87171', fontWeight: 600, fontSize: '0.95rem' }}>Unable to load registered students.</p>
+                      <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', maxWidth: '400px' }}>{fetchError}</p>
+                      <button
+                        type="button"
+                        onClick={() => token && fetchRegistrations(token)}
+                        style={{
+                          marginTop: '6px',
+                          padding: '8px 20px',
+                          borderRadius: '8px',
+                          background: 'linear-gradient(135deg, #00f2fe 0%, #4facfe 100%)',
+                          border: 'none',
+                          color: '#030816',
+                          fontWeight: 700,
+                          fontSize: '0.84rem',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <RotateCw size={14} />
+                        Retry
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <FileSpreadsheet size={32} style={{ margin: '0 auto 10px', opacity: 0.4 }} />
+                      <p>No matching student registrations found in database.</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                registrations.map((student) => {
+                  const badge = getBranchBadgeStyle(student.branch);
+                  const isHighlighted = student.ref_id === highlightedRefId;
+                  return (
+                    <div
+                      key={`mobile-card-${student.ref_id}`}
+                      className={`admin-student-card ${isHighlighted ? 'highlighted' : ''}`}
+                      onClick={() => {
+                        sound.playClick();
+                        setSelectedStudent(student);
+                      }}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {/* Top Row: Ref ID + Branch Badge + Timestamp */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <code
+                            className="font-mono"
+                            style={{
+                              color: 'var(--accent-cyan)',
+                              fontSize: '0.78rem',
+                              fontWeight: 700
+                            }}
+                          >
+                            {student.ref_id}
+                          </code>
+                          <span
+                            style={{
+                              display: 'inline-block',
+                              padding: '2px 8px',
+                              borderRadius: '6px',
+                              background: badge.bg,
+                              border: `1px solid ${badge.border}`,
+                              color: badge.color,
+                              fontSize: '0.7rem',
+                              fontWeight: 700,
+                              fontFamily: 'var(--font-mono)'
+                            }}
+                          >
+                            {student.branch.split('—')[0].trim()}
+                          </span>
+                        </div>
+                        <span className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                          {formatDateTime(student.created_at)}
+                        </span>
+                      </div>
+
+                      {/* Middle: Name + SIC */}
+                      <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '8px' }}>
+                        <h4 style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                          {student.name}
+                        </h4>
+                        <span className="font-mono" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                          {student.sic_no}
+                        </span>
+                      </div>
+
+                      {/* Bottom Row: Marks + Subject + Inspect Button */}
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '8px',
+                          paddingTop: '8px',
+                          borderTop: '1px solid var(--border-subtle)',
+                          flexWrap: 'wrap'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span
+                            className="font-mono"
+                            style={{
+                              fontSize: '0.72rem',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              background: 'var(--btn-secondary-bg)',
+                              border: '1px solid var(--border-subtle)',
+                              color: 'var(--text-secondary)'
+                            }}
+                          >
+                            {student.tenth_percentage}% / {student.twelfth_percentage}%
+                          </span>
+                          <span
+                            style={{
+                              fontSize: '0.72rem',
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              background: 'var(--accent-cyan-glow)',
+                              border: '1px solid var(--border-accent)',
+                              color: 'var(--accent-cyan)',
+                              maxWidth: '120px',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            {student.interested_subject}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            sound.playClick();
+                            setSelectedStudent(student);
+                          }}
+                          className="btn-secondary"
+                          style={{
+                            padding: '6px 12px',
+                            fontSize: '0.72rem',
+                            minHeight: '32px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                        >
+                          <Eye size={12} />
+                          <span>DOSSIER</span>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
 
             {/* Total count indicator */}

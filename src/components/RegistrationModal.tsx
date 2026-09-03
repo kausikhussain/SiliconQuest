@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { safeApiRequest } from '../utils/apiClient';
 import {
   X,
@@ -73,8 +73,6 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedRefId, setSubmittedRefId] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
-
-  if (!isOpen) return null;
 
   const validateField = (name: keyof FormState, value: any): string | undefined => {
     switch (name) {
@@ -264,6 +262,19 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
       setTouched({});
     }, 300);
   };
+
+  // Keyboard accessibility: dismiss registration modal on Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
     <div
