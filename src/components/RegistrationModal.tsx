@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { safeApiRequest } from '../utils/apiClient';
 import {
   X,
   CheckCircle2,
@@ -188,85 +189,27 @@ export const RegistrationModal: React.FC<RegistrationModalProps> = ({ isOpen, on
     sound.playClick();
 
     try {
-      let result: any = null;
-
-      try {
-        const response = await fetch('/api/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            sicNo: formData.sicNo,
-            branch: formData.branch,
-            tenthPercentage: parseFloat(formData.tenthPercentage),
-            twelfthPercentage: parseFloat(formData.twelfthPercentage),
-            interestedSubject: formData.interestedSubject,
-            otherSubject: formData.otherSubject,
-            declarationAccepted: formData.declarationAccepted
-          })
-        });
-
-        const contentType = response.headers.get('content-type') || '';
-        if (contentType.includes('application/json')) {
-          result = await response.json();
-        } else {
-          const rawText = await response.text();
-          try {
-            result = JSON.parse(rawText);
-          } catch {
-            result = null;
-          }
-        }
-
-        if (result && (!response.ok || !result.success)) {
-          throw new Error(result.message || result.errors?.[0] || 'Registration submission failed.');
-        }
-      } catch (fetchErr: any) {
-        // If error was thrown because of invalid data returned by API, rethrow
-        if (result && !result.success) throw fetchErr;
-
-        // If network error, 404, or non-JSON HTML page from static server, use local fallback
-        console.warn('[Registration] Backend API not responding with JSON, saving to local storage:', fetchErr);
-      }
-
-      // Safe fallback if server is offline or statically deployed (e.g. GitHub Pages)
-      if (!result || !result.success) {
-        const generatedRefId = `SQC-2026-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-        const localRecord = {
-          ref_id: generatedRefId,
-          name: formData.name.trim(),
-          sic_no: formData.sicNo.trim().toUpperCase(),
+      const apiResult = await safeApiRequest('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          sicNo: formData.sicNo,
           branch: formData.branch,
-          tenth_percentage: parseFloat(formData.tenthPercentage),
-          twelfth_percentage: parseFloat(formData.twelfthPercentage),
-          interested_subject:
-            formData.interestedSubject === 'Other'
-              ? formData.otherSubject?.trim() || 'Other'
-              : formData.interestedSubject,
-          declaration_accepted: 1,
-          created_at: new Date().toISOString(),
-          is_offline_storage: true
-        };
+          tenthPercentage: parseFloat(formData.tenthPercentage),
+          twelfthPercentage: parseFloat(formData.twelfthPercentage),
+          interestedSubject: formData.interestedSubject,
+          otherSubject: formData.otherSubject,
+          declarationAccepted: formData.declarationAccepted
+        })
+      });
 
-        try {
-          const existing = JSON.parse(localStorage.getItem('sqc_local_registrations') || '[]');
-          existing.unshift(localRecord);
-          localStorage.setItem('sqc_local_registrations', JSON.stringify(existing));
-        } catch {
-          // LocalStorage fallback handled silently
-        }
-
-        result = {
-          success: true,
-          refId: generatedRefId,
-          message: 'Registration recorded successfully!'
-        };
+      if (!apiResult.ok || !apiResult.data?.success) {
+        throw new Error(apiResult.error || apiResult.data?.message || 'Registration submission failed.');
       }
 
       sound.playSuccessCelebration();
-      setSubmittedRefId(result.refId || 'SQC-2026-REGISTERED');
+      setSubmittedRefId(apiResult.data.refId || 'SQC-2026-REGISTERED');
       try {
         confetti({
           particleCount: 120,
