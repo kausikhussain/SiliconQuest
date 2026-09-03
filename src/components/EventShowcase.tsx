@@ -1,42 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Trophy, Sparkles, Download, Award, Clock } from 'lucide-react';
+import React from 'react';
+import { Calendar, MapPin, Trophy, Award, Clock } from 'lucide-react';
 import { CLUB_EVENTS } from '../data/clubData';
 import { sound } from '../utils/soundEngine';
 
 interface EventShowcaseProps {
-  onOpenRegisterModal: () => void;
+  onOpenRegisterModal?: () => void;
 }
 
-export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModal }) => {
+export const EventShowcase: React.FC<EventShowcaseProps> = () => {
   const upcomingEvent = CLUB_EVENTS.find((e) => e.status === 'upcoming') || CLUB_EVENTS[0];
   const pastEvents = CLUB_EVENTS.filter((e) => e.status === 'archived');
-
-  // Dynamic Countdown Timer (Targeting Oct 24, 2026)
-  const [timeLeft, setTimeLeft] = useState({
-    days: 61,
-    hours: 14,
-    minutes: 32,
-    seconds: 48
-  });
-
-  useEffect(() => {
-    const targetDate = new Date('2026-10-24T09:30:00+05:30').getTime();
-
-    const timer = setInterval(() => {
-      const now = new Date().getTime();
-      const difference = targetDate - now;
-
-      if (difference > 0) {
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-        setTimeLeft({ days, hours, minutes, seconds });
-      }
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
 
   const podiumColors = [
     { label: '1ST', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)' },
@@ -56,19 +29,19 @@ export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModa
       className="events-main-section"
     >
       <div className="section-container">
-        {/* Section Header */}
-        <div style={{ marginBottom: '40px' }} className="events-header">
-          <div className="section-tagline">05 · TOURNAMENTS & CHAMPIONSHIPS</div>
+        {/* Section Header — The Story of Silicon Quiz Club */}
+        <div style={{ marginBottom: '48px' }} className="events-header">
+          <div className="section-tagline">05 · THE QUIZ CLUB ARCHIVE</div>
           <h2 className="section-title">
-            FLAGSHIP <span style={{ color: 'var(--accent-cyan)' }}>ARENAS</span>
+            THE MOMENTS <span style={{ color: 'var(--accent-cyan)' }}>THAT DEFINE US.</span>
           </h2>
           <p className="section-subtitle">
-            Arena-scale championships, lateral elimination finals, and the quizzers who conquered them.
+            A visual archive of the people, questions, competition and moments that shaped Silicon Quiz Club.
           </p>
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            FEATURED UPCOMING EVENT — Full-width Hero
+            FEATURED VISUAL MOMENT — Full-Bleed Cinematic Hero
         ═══════════════════════════════════════════════════════════════════ */}
         <div
           className="glass-panel featured-event-hero"
@@ -81,7 +54,7 @@ export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModa
             position: 'relative'
           }}
         >
-          {/* Full-width Background Image */}
+          {/* Full-bleed Background Image */}
           <div className="featured-event-image-box">
             <img
               src={upcomingEvent.image}
@@ -90,195 +63,97 @@ export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModa
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover',
-                filter: 'brightness(0.5) contrast(1.15)',
+                objectPosition: 'center 40%',
+                filter: 'brightness(0.65) contrast(1.1)',
                 transition: 'transform 0.6s ease'
               }}
             />
+            {/* Cinematic Scrim */}
             <div
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'linear-gradient(135deg, rgba(7, 9, 14, 0.92) 0%, rgba(7, 9, 14, 0.4) 50%, rgba(7, 9, 14, 0.85) 100%)'
+                background: 'linear-gradient(to top, rgba(7, 9, 14, 0.92) 0%, rgba(7, 9, 14, 0.45) 50%, rgba(7, 9, 14, 0.25) 100%)'
               }}
             />
           </div>
 
-          {/* Content Overlay */}
+          {/* Clean Editorial Content Overlay — Image First */}
           <div className="featured-event-content">
-            {/* Top Badges */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '20px' }}>
-              <span
-                className="badge-tag"
-                style={{
-                  background: 'rgba(2, 132, 199, 0.9)',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 700
-                }}
-              >
-                FLAGSHIP ANNUAL ARENA
-              </span>
+            {/* Small Category Label */}
+            <div style={{ marginBottom: '16px' }}>
               <span
                 className="font-mono"
                 style={{
-                  padding: '4px 10px',
-                  borderRadius: '999px',
-                  background: 'rgba(7, 9, 14, 0.85)',
-                  backdropFilter: 'blur(10px)',
-                  color: '#6ee7b7',
-                  fontSize: '0.68rem',
-                  fontWeight: 600,
-                  border: '1px solid rgba(16, 185, 129, 0.4)'
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.16em',
+                  color: 'var(--accent-cyan)',
+                  textTransform: 'uppercase',
+                  fontWeight: 700,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
                 }}
               >
-                REGISTRATIONS OPEN
+                FLAGSHIP CHAPTER · EDITION VII
               </span>
             </div>
 
-            {/* Meta Row */}
-            <div
-              className="font-mono"
-              style={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                alignItems: 'center',
-                gap: '10px',
-                fontSize: '0.72rem',
-                color: 'var(--accent-cyan)',
-                marginBottom: '12px'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <Calendar size={13} />
-                <span>{upcomingEvent.date}</span>
-              </div>
-              <span>·</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <MapPin size={13} />
-                <span>{upcomingEvent.venue}</span>
-              </div>
-            </div>
-
-            {/* Title */}
+            {/* Large Editorial Title */}
             <h3
               className="font-display"
               style={{
-                fontSize: 'clamp(1.6rem, 4vw, 2.6rem)',
+                fontSize: 'clamp(2rem, 5.5vw, 3.8rem)',
                 fontWeight: 800,
                 color: '#ffffff',
-                letterSpacing: '-0.02em',
+                letterSpacing: '-0.025em',
                 marginBottom: '12px',
-                lineHeight: 1.1
+                lineHeight: 1.05
               }}
             >
               {upcomingEvent.title}
             </h3>
 
-            <p style={{ fontSize: '0.9rem', lineHeight: 1.6, color: 'rgba(255, 255, 255, 0.75)', marginBottom: '24px', maxWidth: '560px' }}>
-              {upcomingEvent.shortDescription}
+            {/* Very Short Supporting Text */}
+            <p
+              style={{
+                fontSize: 'clamp(0.95rem, 1.8vw, 1.15rem)',
+                lineHeight: 1.6,
+                color: 'rgba(255, 255, 255, 0.85)',
+                marginBottom: '20px',
+                maxWidth: '620px'
+              }}
+            >
+              A flagship chapter of the Silicon Quiz Club bringing together the sharpest academic minds.
             </p>
 
-            {/* Prize Pool */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#ffffff', marginBottom: '24px' }}>
-              <Trophy size={16} color="#f59e0b" />
-              <span className="font-mono" style={{ fontSize: '0.78rem', letterSpacing: '0.08em' }}>
-                CHAMPIONSHIP POOL: ₹25,000 + TROPHIES
-              </span>
-            </div>
-
-            {/* Countdown Grid */}
-            <div style={{ marginBottom: '28px' }}>
-              <span
-                className="font-mono"
-                style={{
-                  display: 'block',
-                  fontSize: '0.65rem',
-                  color: 'rgba(255, 255, 255, 0.5)',
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  marginBottom: '10px'
-                }}
-              >
-                COUNTDOWN TO AUDITORIUM PRELIMS
-              </span>
-
-              <div className="countdown-grid">
-                {[
-                  { label: 'DAYS', val: timeLeft.days },
-                  { label: 'HOURS', val: timeLeft.hours },
-                  { label: 'MINS', val: timeLeft.minutes },
-                  { label: 'SECS', val: timeLeft.seconds }
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      padding: '10px 4px',
-                      background: 'rgba(255, 255, 255, 0.06)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      borderRadius: '10px',
-                      textAlign: 'center'
-                    }}
-                  >
-                    <span
-                      className="font-mono"
-                      style={{
-                        display: 'block',
-                        fontSize: 'clamp(1.1rem, 3.5vw, 1.4rem)',
-                        fontWeight: 800,
-                        color: '#ffffff'
-                      }}
-                    >
-                      {item.val.toString().padStart(2, '0')}
-                    </span>
-                    <span
-                      className="font-mono"
-                      style={{
-                        fontSize: '0.55rem',
-                        color: 'rgba(255, 255, 255, 0.5)',
-                        letterSpacing: '0.08em'
-                      }}
-                    >
-                      {item.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Actions */}
+            {/* Minimal Date & Venue Badge */}
             <div
+              className="font-mono"
               style={{
-                display: 'flex',
+                display: 'inline-flex',
                 flexWrap: 'wrap',
                 alignItems: 'center',
-                gap: '10px'
+                gap: '12px',
+                fontSize: '0.74rem',
+                color: 'rgba(255, 255, 255, 0.7)',
+                padding: '8px 16px',
+                borderRadius: '999px',
+                background: 'rgba(7, 9, 14, 0.75)',
+                backdropFilter: 'blur(12px)',
+                border: '1px solid rgba(255, 255, 255, 0.15)',
+                width: 'fit-content'
               }}
-              className="event-actions-stack"
             >
-              <button
-                onClick={() => {
-                  sound.playClick();
-                  onOpenRegisterModal();
-                }}
-                className="btn-cyan event-action-btn"
-                onMouseEnter={() => sound.playHover()}
-              >
-                <Sparkles size={15} />
-                <span>REGISTER TEAM</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  sound.playClick();
-                  alert('BRAINBLAST 2026 Rulebook & Guidelines downloaded.');
-                }}
-                className="btn-secondary event-action-btn"
-                onMouseEnter={() => sound.playHover()}
-                style={{ color: '#ffffff', borderColor: 'rgba(255, 255, 255, 0.2)' }}
-              >
-                <Download size={14} />
-                <span>RULEBOOK (PDF)</span>
-              </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Calendar size={13} color="var(--accent-cyan)" />
+                <span>{upcomingEvent.date}</span>
+              </div>
+              <span style={{ opacity: 0.4 }}>·</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <MapPin size={13} color="var(--accent-cyan)" />
+                <span>{upcomingEvent.venue}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -650,9 +525,12 @@ export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModa
       <style>{`
         .featured-event-hero {
           position: relative;
-          min-height: 420px;
+          min-height: 440px;
           display: flex;
           flex-direction: column;
+        }
+        .featured-event-hero:hover .featured-event-image-box img {
+          transform: scale(1.02);
         }
         .featured-event-image-box {
           position: absolute;
@@ -661,21 +539,16 @@ export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModa
         .featured-event-image-box img {
           position: absolute;
           inset: 0;
+          transition: transform 0.8s ease;
         }
         .featured-event-content {
           position: relative;
           z-index: 2;
-          padding: 28px 24px;
+          padding: 36px 24px;
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
           flex: 1;
-        }
-        .countdown-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 8px;
-          max-width: 320px;
         }
 
         /* Event Chapter — Split Layout */
@@ -691,23 +564,13 @@ export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModa
           max-width: 700px;
         }
 
-        @media (max-width: 480px) {
-          .event-actions-stack {
-            flex-direction: column;
-            width: 100%;
-          }
-          .event-action-btn {
-            width: 100%;
-          }
-        }
-
         @media (min-width: 768px) {
           .featured-event-content {
-            padding: 48px 44px;
-            max-width: 620px;
+            padding: 56px 44px;
+            max-width: 720px;
           }
           .featured-event-hero {
-            min-height: 500px;
+            min-height: 520px;
           }
         }
 
@@ -719,10 +582,10 @@ export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenRegisterModa
             margin-bottom: 64px;
           }
           .featured-event-hero {
-            min-height: 540px;
+            min-height: 560px;
           }
           .featured-event-content {
-            padding: 56px 52px;
+            padding: 64px 56px;
           }
 
           /* Split Layout on desktop */

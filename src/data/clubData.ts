@@ -134,13 +134,13 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
   },
   {
     id: 'gal-03',
-    title: 'Brainblast 2025 Official Syndicate & Faculty Group',
-    category: 'championship',
-    categoryLabel: 'Championship Archives',
-    src: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.33 AM (1).jpeg',
-    caption: 'Official delegation and finalists of BRAINBLAST 2025 at Silicon Institute of Technology, Sambalpur.',
-    date: '29 Nov 2025',
-    location: 'Silicon Sambalpur',
+    title: 'Stage Aptitude Screening & Scoring Telemetry',
+    category: 'live-stage',
+    categoryLabel: 'Stage Operations',
+    src: '/assets/images/WhatsApp Image 2026-08-23 at 12.41.34 AM.jpeg',
+    caption: 'Quizmaster presenting a high-pressure numerical deduction problem while technical coordinators maintain real-time arena scoring.',
+    date: 'Aptitude Challenge',
+    location: 'Silicon Hall',
     featured: true
   },
   {
