@@ -288,12 +288,13 @@ export const TeamSection: React.FC = () => {
               <div className="leadership-portrait-box">
                 <img
                   src={secretary.image}
-                  alt={secretary.name}
-                  className="leadership-img"
+                  alt="Kausik Hussain — Secretary, Quiz Club"
+                  className="leadership-img secretary-portrait"
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
+                    objectPosition: 'top center',
                     transition: 'transform 0.5s ease'
                   }}
                   loading="lazy"
@@ -720,6 +721,11 @@ export const TeamSection: React.FC = () => {
         }
         .leadership-card:hover .leadership-img {
           transform: scale(1.04);
+        }
+
+        /* Secretary wider portrait — preserve upper-body framing */
+        .leadership-portrait-box .secretary-portrait {
+          object-position: top center !important;
         }
 
         /* Senior Coordinators Grid */
