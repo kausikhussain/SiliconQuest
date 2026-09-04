@@ -343,7 +343,7 @@ export const CLUB_MEMBERS: ClubMember[] = [
     name: 'Rupesh Sahu',
     designation: 'JOINT SECRETARY · QUIZ CLUB',
     tier: 'joint_secretary',
-    image: '/assets/images/Members/Rupesh Sahu Portrait.jpeg',
+    image: '/assets/images/Members/Rupesh Sahu.jpeg',
     bio: 'Co-directing stage operations, real-time arena telemetry, and high-velocity syndicate coordination across collegiate championships.'
   },
 
