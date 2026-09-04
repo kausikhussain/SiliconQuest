@@ -86,9 +86,9 @@ export const CLUB_EVENTS: ClubEvent[] = [
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.39.13 AM.jpeg',
     status: 'COMPLETED',
     podium: {
-      first: 'Priyabrata Pal & Ayush Jena',
-      second: 'Sanya Sonalika & Saundarya Sinha',
-      third: 'Satyam Chandra Nath & ARYAN DEO'
+      first: 'Rahul Raj & Samson Barjo',
+      second: 'Aprna Dash & Ankita Tarai',
+      third: 'Samyak Raj & Ayush Jena'
     }
   },
 
@@ -110,27 +110,6 @@ export const CLUB_EVENTS: ClubEvent[] = [
     shortDescription: 'Flagship inter-collegiate championship with multi-round elimination and live stage finals.',
     image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.33 AM (1).jpeg',
     status: 'COMPLETED'
-  },
-  {
-    id: 'ast-challenge-2025',
-    title: 'AST-2025 QUIZ CHALLENGE',
-    subtitle: 'Applied Science & Technology Invitational',
-    edition: '2025 Annual',
-    date: 'NOVEMBER 2025',
-    isoDate: '2025-11-15',
-    year: 2025,
-    category: 'Aptitude Challenge',
-    location: 'Lecture Hall 04, Silicon Institute of Technology',
-    venue: 'LH-04',
-    description: 'Faculty-supervised analytical invitational testing mathematical shortcuts, astronomical anomalies, and deep tech fundamentals through rigorous pen-and-paper screening.',
-    shortDescription: 'Analytical invitational with pen-and-paper screening and faculty-supervised jury.',
-    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.32 AM.jpeg',
-    status: 'COMPLETED',
-    podium: {
-      first: 'K. Bharat & Asish Patra',
-      second: 'Om Prakash Dash & Tanisha Pattnaik',
-      third: 'Jane Eric Barla & Rahul Raj'
-    }
   }
 ];
 
@@ -239,16 +218,7 @@ export const GALLERY_PHOTOS: GalleryPhoto[] = [
     date: 'Inter-Department Qualifier',
     location: 'Silicon Hall'
   },
-  {
-    id: 'gal-10',
-    title: 'AST-2025 Certificate of Merit Conferral',
-    category: 'championship',
-    categoryLabel: 'Academic Laurels',
-    src: '/assets/images/WhatsApp Image 2026-08-23 at 12.44.32 AM.jpeg',
-    caption: 'Merit certificate presentation for exceptional analytical problem solving during AST-2025.',
-    date: 'AST 2025 Ceremony',
-    location: 'Lecture Hall'
-  },
+
   {
     id: 'gal-11',
     title: 'Pen & Paper Preliminary Screening Round',

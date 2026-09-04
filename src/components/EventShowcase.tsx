@@ -502,40 +502,66 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
                   color: 'var(--text-muted)',
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  marginBottom: '12px',
+                  marginBottom: '14px',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '8px',
+                  fontWeight: 700
                 }}
               >
-                <Award size={12} />
-                VERIFIED CHAMPIONSHIP PODIUM
+                <Award size={14} color="var(--accent-cyan)" />
+                <span>VERIFIED CHAMPIONSHIP PODIUM</span>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {[
-                  { label: '1ST', name: 'Priyabrata Pal & Ayush Jena', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.12)', border: 'rgba(245, 158, 11, 0.3)' },
-                  { label: '2ND', name: 'Sanya Sonalika & Saundarya Sinha', color: '#94a3b8', bg: 'rgba(148, 163, 184, 0.1)', border: 'rgba(148, 163, 184, 0.25)' },
-                  { label: '3RD', name: 'Satyam Chandra Nath & ARYAN DEO', color: '#d97706', bg: 'rgba(217, 119, 6, 0.1)', border: 'rgba(217, 119, 6, 0.25)' }
+                  {
+                    rank: '1ST',
+                    names: 'Rahul Raj & Samson Barjo',
+                    badge: '🥇',
+                    color: '#f59e0b',
+                    bg: 'rgba(245, 158, 11, 0.09)',
+                    border: 'rgba(245, 158, 11, 0.35)',
+                    iconBg: 'rgba(245, 158, 11, 0.16)'
+                  },
+                  {
+                    rank: '2ND',
+                    names: 'Aprna Dash & Ankita Tarai',
+                    badge: '🥈',
+                    color: '#94a3b8',
+                    bg: 'rgba(148, 163, 184, 0.08)',
+                    border: 'rgba(148, 163, 184, 0.3)',
+                    iconBg: 'rgba(148, 163, 184, 0.14)'
+                  },
+                  {
+                    rank: '3RD',
+                    names: 'Samyak Raj & Ayush Jena',
+                    badge: '🥉',
+                    color: '#d97706',
+                    bg: 'rgba(217, 119, 6, 0.08)',
+                    border: 'rgba(217, 119, 6, 0.3)',
+                    iconBg: 'rgba(217, 119, 6, 0.14)'
+                  }
                 ].map((podiumItem, pi) => (
                   <div
                     key={pi}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '10px',
-                      padding: '8px 12px',
-                      borderRadius: '10px',
+                      gap: '12px',
+                      padding: '10px 14px',
+                      borderRadius: '12px',
                       background: podiumItem.bg,
-                      border: `1px solid ${podiumItem.border}`
+                      border: `1px solid ${podiumItem.border}`,
+                      transition: 'transform 0.25s ease, border-color 0.25s ease'
                     }}
                   >
                     <div
                       style={{
-                        width: '26px',
-                        height: '26px',
-                        borderRadius: '6px',
-                        background: podiumItem.bg,
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        background: podiumItem.iconBg,
                         border: `1px solid ${podiumItem.border}`,
                         display: 'flex',
                         alignItems: 'center',
@@ -543,30 +569,35 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
                         flexShrink: 0
                       }}
                     >
-                      <Trophy size={12} color={podiumItem.color} />
+                      <Trophy size={14} color={podiumItem.color} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div
                         className="font-mono"
                         style={{
-                          fontSize: '0.58rem',
+                          fontSize: '0.62rem',
                           color: podiumItem.color,
-                          letterSpacing: '0.1em'
+                          letterSpacing: '0.12em',
+                          fontWeight: 700,
+                          marginBottom: '2px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '5px'
                         }}
                       >
-                        {podiumItem.label}
+                        <span>{podiumItem.badge}</span>
+                        <span>{podiumItem.rank}</span>
                       </div>
                       <div
                         style={{
-                          fontSize: '0.82rem',
-                          fontWeight: 600,
+                          fontSize: '0.92rem',
+                          fontWeight: 700,
                           color: 'var(--text-primary)',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis'
+                          lineHeight: 1.35,
+                          wordBreak: 'break-word'
                         }}
                       >
-                        {podiumItem.name}
+                        {podiumItem.names}
                       </div>
                     </div>
                   </div>
