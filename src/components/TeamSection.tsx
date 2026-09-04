@@ -710,7 +710,7 @@ export const TeamSection: React.FC = () => {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center 12% !important;
+          object-position: center 10% !important;
           transition: transform 0.5s ease;
         }
         .leadership-card:hover {
