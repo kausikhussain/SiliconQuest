@@ -294,7 +294,6 @@ export const TeamSection: React.FC = () => {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'top center',
                     transition: 'transform 0.5s ease'
                   }}
                   loading="lazy"
@@ -303,10 +302,9 @@ export const TeamSection: React.FC = () => {
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(to top, rgba(7, 9, 14, 0.75) 0%, transparent 50%)'
+                    background: 'linear-gradient(to top, rgba(7, 9, 14, 0.7) 0%, transparent 45%)'
                   }}
                 />
-
               </div>
 
               <div
@@ -380,7 +378,6 @@ export const TeamSection: React.FC = () => {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'top center',
                     transition: 'transform 0.5s ease'
                   }}
                   loading="lazy"
@@ -389,10 +386,9 @@ export const TeamSection: React.FC = () => {
                   style={{
                     position: 'absolute',
                     inset: 0,
-                    background: 'linear-gradient(to top, rgba(7, 9, 14, 0.75) 0%, transparent 50%)'
+                    background: 'linear-gradient(to top, rgba(7, 9, 14, 0.7) 0%, transparent 45%)'
                   }}
                 />
-
               </div>
 
               <div
@@ -453,7 +449,7 @@ export const TeamSection: React.FC = () => {
         </div>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            TIER 04 — SENIOR COORDINATORS (Sourav, Ujjwal, Sneha, Aakriti)
+            TIER 04 — SENIOR COORDINATORS (6 Members)
         ═══════════════════════════════════════════════════════════════════ */}
         <div className="tier-wrapper" style={{ marginBottom: '56px', position: 'relative' }}>
           <div
@@ -483,7 +479,7 @@ export const TeamSection: React.FC = () => {
             </span>
           </div>
 
-          {/* 4-Column Editorial Showcase */}
+          {/* 6-Member Balanced 3x2 Editorial Showcase */}
           <div className="senior-coordinators-grid">
             {seniorCoordinators.map((member) => (
               <div
@@ -701,14 +697,21 @@ export const TeamSection: React.FC = () => {
           display: grid;
           grid-template-columns: 1fr;
           gap: 20px;
-          max-width: 960px;
+          max-width: 440px;
           margin: 0 auto;
         }
         .leadership-portrait-box {
           position: relative;
-          height: 280px;
+          height: 320px;
           overflow: hidden;
           background: var(--bg-surface-elevated);
+        }
+        .leadership-portrait-box .leadership-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center 12% !important;
+          transition: transform 0.5s ease;
         }
         .leadership-card:hover {
           transform: translateY(-4px);
@@ -799,10 +802,17 @@ export const TeamSection: React.FC = () => {
         }
 
         /* Responsive Breakpoints */
-        @media (min-width: 640px) {
+        @media (min-width: 640px) and (max-width: 767px) {
           .senior-coordinators-grid {
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
+            max-width: 600px;
+          }
+          .senior-coordinators-grid > :nth-child(5) {
+            grid-column: span 2;
+            max-width: 290px;
+            margin: 0 auto;
+            width: 100%;
           }
           .coordinators-grid {
             grid-template-columns: repeat(3, 1fr);
@@ -816,7 +826,7 @@ export const TeamSection: React.FC = () => {
           }
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 768px) and (max-width: 1023px) {
           .faculty-grid {
             grid-template-columns: 2fr 3fr;
           }
@@ -825,14 +835,29 @@ export const TeamSection: React.FC = () => {
           }
           .leadership-pair-grid {
             grid-template-columns: 1fr 1fr;
-            gap: 24px;
+            gap: 20px;
+            max-width: 740px;
+            margin: 0 auto;
           }
           .leadership-portrait-box {
-            height: 340px;
+            height: 330px;
+          }
+          .senior-coordinators-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            max-width: 840px;
+            margin: 0 auto;
           }
           .coordinators-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 18px;
+          }
+          .senior-portrait-box {
+            height: 260px;
+          }
+          .coordinator-portrait-box {
+            height: 270px;
           }
         }
 
@@ -852,16 +877,28 @@ export const TeamSection: React.FC = () => {
           .faculty-details {
             padding: 48px 40px;
           }
+          .leadership-pair-grid {
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 780px;
+            margin: 0 auto;
+          }
+          .leadership-portrait-box {
+            height: 340px;
+          }
           .senior-coordinators-grid {
-            grid-template-columns: repeat(5, 1fr);
-            gap: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 22px;
+            max-width: 960px;
+            margin: 0 auto;
           }
           .coordinators-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
           }
           .senior-portrait-box {
-            height: 250px;
+            height: 270px;
           }
           .coordinator-portrait-box {
             height: 290px;

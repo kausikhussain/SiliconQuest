@@ -333,7 +333,7 @@ export const CLUB_MEMBERS: ClubMember[] = [
     name: 'Kausik Hussain',
     designation: 'SECRETARY · QUIZ CLUB',
     tier: 'secretary',
-    image: '/assets/images/Members/Kausik Hussain.png',
+    image: '/assets/images/Members/Kausik Hussain Portrait.png',
     bio: 'Chief student executive spearheading tournament architecture, collegiate syndicate representation, and inter-institutional championship coordination.'
   },
 
@@ -343,24 +343,17 @@ export const CLUB_MEMBERS: ClubMember[] = [
     name: 'Rupesh Sahu',
     designation: 'JOINT SECRETARY · QUIZ CLUB',
     tier: 'joint_secretary',
-    image: '/assets/images/Members/Rupesh Sahu.jpeg',
+    image: '/assets/images/Members/Rupesh Sahu Portrait.jpeg',
     bio: 'Co-directing stage operations, real-time arena telemetry, and high-velocity syndicate coordination across collegiate championships.'
   },
 
-  // TIER 04 — SENIOR COORDINATORS
+  // TIER 04 — SENIOR COORDINATORS (6 Members)
   {
     id: 'snr-sourav',
     name: 'Sourav',
     designation: 'SENIOR COORDINATOR',
     tier: 'senior_coordinator',
     image: '/assets/images/Members/Sourav.jpeg'
-  },
-  {
-    id: 'snr-saurav-kr',
-    name: 'Saurav Kumar',
-    designation: 'SENIOR COORDINATOR',
-    tier: 'senior_coordinator',
-    image: '/assets/images/Members/Saurav Kumar.jpeg'
   },
   {
     id: 'snr-ujjwal',
@@ -382,6 +375,20 @@ export const CLUB_MEMBERS: ClubMember[] = [
     designation: 'SENIOR COORDINATOR',
     tier: 'senior_coordinator',
     image: '/assets/images/Members/Aakriti Priya Pandit.png'
+  },
+  {
+    id: 'snr-asmita',
+    name: 'Asmita Soni',
+    designation: 'SENIOR COORDINATOR',
+    tier: 'senior_coordinator',
+    image: '/assets/images/Members/Asmita Soni.png'
+  },
+  {
+    id: 'snr-saurav-kr',
+    name: 'Saurav Kumar',
+    designation: 'SENIOR COORDINATOR',
+    tier: 'senior_coordinator',
+    image: '/assets/images/Members/Saurav Kumar.jpeg'
   },
 
   // TIER 05 & 06 — COORDINATORS
