@@ -294,7 +294,7 @@ export const TeamSection: React.FC = () => {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'top center',
+                    objectPosition: 'center 10%',
                     transition: 'transform 0.5s ease'
                   }}
                   loading="lazy"
@@ -723,9 +723,9 @@ export const TeamSection: React.FC = () => {
           transform: scale(1.04);
         }
 
-        /* Secretary wider portrait — preserve upper-body framing */
+        /* Secretary balanced portrait framing matching team */
         .leadership-portrait-box .secretary-portrait {
-          object-position: top center !important;
+          object-position: center 10% !important;
         }
 
         /* Senior Coordinators Grid */
