@@ -319,10 +319,10 @@ export const CLUB_MEMBERS: ClubMember[] = [
   // TIER 01 — FACULTY / FIC
   {
     id: 'fic-padhi',
-    name: 'Dr. Chinmayee Padhi',
+    name: 'Dr. Chinmayee Padhy',
     designation: 'FIC · QUIZ CLUB',
     tier: 'fic',
-    image: '/assets/images/Members/Dr. Chinmayee Padhi.png',
+    image: '/assets/images/Members/Dr. Chinmayee Padhy.png',
     bio: 'Faculty-in-Charge guiding the intellectual mission, institutional governance, and academic excellence of Silicon Quiz Club at Silicon Institute of Technology.',
     department: 'Faculty-in-Charge · Silicon Institute of Technology'
   },
@@ -460,12 +460,12 @@ export const CLUB_MEMBERS: ClubMember[] = [
 export const TEAM_PROFILES: TeamProfile[] = [
   {
     id: 'fic-padhi',
-    name: 'Dr. Chinmayee Padhi',
+    name: 'Dr. Chinmayee Padhy',
     role: 'FIC · QUIZ CLUB',
     title: 'Faculty-in-Charge, Silicon Quiz Club',
     specialty: ['Academic Oversight', 'Tournament Sanctioning', 'Institutional Governance'],
     bio: 'Faculty-in-Charge guiding the intellectual mission, institutional governance, and academic excellence of Silicon Quiz Club at Silicon Institute of Technology.',
-    image: '/assets/images/Members/Dr. Chinmayee Padhi.png',
+    image: '/assets/images/Members/Dr. Chinmayee Padhy.png',
     socials: {
       email: 'fic.quiz@silicon.ac.in'
     }

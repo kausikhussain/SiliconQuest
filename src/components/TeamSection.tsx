@@ -294,7 +294,7 @@ export const TeamSection: React.FC = () => {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'center 10%',
+                    objectPosition: 'center 20%',
                     transition: 'transform 0.5s ease'
                   }}
                   loading="lazy"
@@ -723,9 +723,29 @@ export const TeamSection: React.FC = () => {
           transform: scale(1.04);
         }
 
-        /* Secretary balanced portrait framing matching team */
+        /* Secretary balanced portrait framing — wider upper-body view
+           matching the head+neck+shoulders+upper-torso framing of
+           other member portraits (Sourav, Ujjwal, Sneha, etc.) */
         .leadership-portrait-box .secretary-portrait {
-          object-position: center 10% !important;
+          object-position: center 20% !important;
+        }
+
+        /* ── Mobile fix: Kausik portrait too zoomed-in ──
+           On mobile the leadership card goes full-width but the
+           portrait box stays at a fixed 320px height. With the
+           portrait-oriented source image, object-fit:cover crops
+           aggressively, making the face fill the frame.
+           Fix: use aspect-ratio so the box scales proportionally
+           with card width, and shift object-position down to
+           reveal head + neck + shoulders + upper torso. */
+        @media (max-width: 639px) {
+          .leadership-portrait-box {
+            height: auto !important;
+            aspect-ratio: 3 / 4;
+          }
+          .leadership-portrait-box .secretary-portrait {
+            object-position: center 15% !important;
+          }
         }
 
         /* Senior Coordinators Grid */
