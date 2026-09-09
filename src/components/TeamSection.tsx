@@ -703,7 +703,7 @@ export const TeamSection: React.FC = () => {
         }
         .leadership-portrait-box {
           position: relative;
-          height: 320px;
+          aspect-ratio: 3 / 4;
           overflow: hidden;
           background: var(--bg-surface-elevated);
         }
@@ -730,14 +730,6 @@ export const TeamSection: React.FC = () => {
           object-position: center 20% !important;
         }
 
-        /* ── Mobile fix: Kausik portrait too zoomed-in ──
-           On mobile the leadership card goes full-width but the
-           portrait box stays at a fixed 320px height. With the
-           portrait-oriented source image, object-fit:cover crops
-           aggressively, making the face fill the frame.
-           Fix: use aspect-ratio so the box scales proportionally
-           with card width, and shift object-position down to
-           reveal head + neck + shoulders + upper torso. */
         @media (max-width: 639px) {
           .leadership-portrait-box {
             height: auto !important;
@@ -866,7 +858,8 @@ export const TeamSection: React.FC = () => {
             margin: 0 auto;
           }
           .leadership-portrait-box {
-            height: 330px;
+            height: auto;
+            aspect-ratio: 3 / 4;
           }
           .senior-coordinators-grid {
             display: grid;
@@ -910,7 +903,8 @@ export const TeamSection: React.FC = () => {
             margin: 0 auto;
           }
           .leadership-portrait-box {
-            height: 340px;
+            height: auto;
+            aspect-ratio: 3 / 4;
           }
           .senior-coordinators-grid {
             display: grid;
