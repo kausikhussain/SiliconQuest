@@ -333,7 +333,7 @@ export const CLUB_MEMBERS: ClubMember[] = [
     name: 'Kausik Hussain',
     designation: 'SECRETARY · QUIZ CLUB',
     tier: 'secretary',
-    image: '/assets/images/Members/Kausik Hussain.png',
+    image: '/assets/images/Members/Kausik Hussain.png?v=20260909',
     bio: 'Chief student executive spearheading tournament architecture, collegiate syndicate representation, and inter-institutional championship coordination.'
   },
 
@@ -477,7 +477,7 @@ export const TEAM_PROFILES: TeamProfile[] = [
     title: 'Chief Student Executive',
     specialty: ['Tournament Architecture', 'Syndicate Direction', 'Arena Operations'],
     bio: 'Chief student executive spearheading tournament architecture, collegiate syndicate representation, and inter-institutional championship coordination.',
-    image: '/assets/images/Members/Kausik Hussain.png',
+    image: '/assets/images/Members/Kausik Hussain.png?v=20260909',
     socials: {
       email: 'quizclub@silicon.ac.in'
     }
