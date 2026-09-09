@@ -294,7 +294,7 @@ export const TeamSection: React.FC = () => {
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'center 20%',
+                    objectPosition: 'center top',
                     transition: 'transform 0.5s ease'
                   }}
                   loading="lazy"
@@ -711,7 +711,7 @@ export const TeamSection: React.FC = () => {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center 10% !important;
+          object-position: center 5% !important;
           transition: transform 0.5s ease;
         }
         .leadership-card:hover {
@@ -723,11 +723,10 @@ export const TeamSection: React.FC = () => {
           transform: scale(1.04);
         }
 
-        /* Secretary balanced portrait framing — wider upper-body view
-           matching the head+neck+shoulders+upper-torso framing of
-           other member portraits (Sourav, Ujjwal, Sneha, etc.) */
+        /* Secretary natural portrait framing — preserves full headroom,
+           head, shoulders, and buttoned shirt as in original photo */
         .leadership-portrait-box .secretary-portrait {
-          object-position: center 20% !important;
+          object-position: center top !important;
         }
 
         @media (max-width: 639px) {
@@ -736,7 +735,7 @@ export const TeamSection: React.FC = () => {
             aspect-ratio: 3 / 4;
           }
           .leadership-portrait-box .secretary-portrait {
-            object-position: center 15% !important;
+            object-position: center top !important;
           }
         }
 
