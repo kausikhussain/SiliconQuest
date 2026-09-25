@@ -5,7 +5,7 @@ import { HeroSection } from './components/HeroSection';
 import { AboutManifesto } from './components/AboutManifesto';
 import { DisciplinesSection } from './components/DisciplinesSection';
 import { EventShowcase } from './components/EventShowcase';
-
+import { MindMirrorShowcase } from './components/MindMirrorShowcase';
 import { EditorialGallery } from './components/EditorialGallery';
 import { TeamSection } from './components/TeamSection';
 import { KnowledgeVault } from './components/KnowledgeVault';
@@ -26,6 +26,7 @@ export const App: React.FC = () => {
 
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [isMindMirrorOpen, setIsMindMirrorOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -81,7 +82,10 @@ export const App: React.FC = () => {
           <DisciplinesSection />
 
           {/* 05 — FLAGSHIP TOURNAMENTS & CHAMPIONSHIP ARCHIVES */}
-          <EventShowcase onOpenRegisterModal={() => setIsJoinModalOpen(true)} />
+          <EventShowcase
+            onOpenRegisterModal={() => setIsJoinModalOpen(true)}
+            onOpenMindMirror={() => setIsMindMirrorOpen(true)}
+          />
 
           {/* 06 — EDITORIAL GALLERY */}
           <EditorialGallery />
@@ -108,8 +112,15 @@ export const App: React.FC = () => {
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
       />
+
+      {/* 13 — MINDMIRROR 2K26 EVENT SHOWCASE */}
+      <MindMirrorShowcase
+        isOpen={isMindMirrorOpen}
+        onClose={() => setIsMindMirrorOpen(false)}
+      />
     </div>
   );
 };
 
 export default App;
+
