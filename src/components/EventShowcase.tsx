@@ -1,13 +1,14 @@
 import React from 'react';
-import { Calendar, MapPin, Trophy, Award, Clock, Users, Flame } from 'lucide-react';
+import { Calendar, MapPin, Trophy, Award, Clock, Users, Flame, ArrowRight } from 'lucide-react';
 import { CLUB_EVENTS, getEventStatus } from '../data/clubData';
 import { sound } from '../utils/soundEngine';
 
 interface EventShowcaseProps {
   onOpenRegisterModal?: () => void;
+  onOpenMindMirror?: () => void;
 }
 
-export const EventShowcase: React.FC<EventShowcaseProps> = () => {
+export const EventShowcase: React.FC<EventShowcaseProps> = ({ onOpenMindMirror }) => {
   // Dynamically determine event status based on current date
   const upcomingEvents = CLUB_EVENTS.filter(
     (e) => getEventStatus(e.isoDate, e.status) === 'UPCOMING'
@@ -41,7 +42,7 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
             THE REAL <span style={{ color: 'var(--accent-cyan)' }}>TIMELINE</span>
           </h2>
           <p className="section-subtitle">
-            Authentic chronicle of completed club activities through August 2026 and confirmed upcoming programmes.
+            Authentic chronicle of completed club activities through September 2026 and confirmed upcoming programmes.
           </p>
         </div>
 
@@ -139,6 +140,165 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
         ))}
 
         {/* ═══════════════════════════════════════════════════════════════════
+            MINDMIRROR 2K26 — PREMIUM EVENT CARD
+        ═══════════════════════════════════════════════════════════════════ */}
+        <div
+          className="glass-panel mm-event-card"
+          style={{
+            borderRadius: '24px',
+            overflow: 'hidden',
+            border: '1px solid var(--border-accent)',
+            boxShadow: 'var(--shadow-elevated)',
+            marginBottom: '56px',
+            cursor: 'pointer',
+            transition: 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease',
+          }}
+          onClick={() => { sound.playClick(); onOpenMindMirror?.(); }}
+          onMouseEnter={() => sound.playHover()}
+        >
+          {/* Hero Image */}
+          <div style={{ position: 'relative', overflow: 'hidden', height: 'clamp(200px, 30vw, 380px)' }}>
+            <img
+              src="/assets/images/1/Banner.jpeg"
+              alt="MindMirror 2K26 — Silicon Quiz Club orientation event banner"
+              className="mm-card-hero-img"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                objectPosition: 'center 40%',
+                transition: 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
+              }}
+              loading="lazy"
+            />
+            {/* Gradient overlay */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(to top, rgba(7, 9, 14, 0.85) 0%, rgba(7, 9, 14, 0.25) 50%, transparent 100%)',
+              }}
+            />
+            {/* Event badge */}
+            <div
+              className="font-mono"
+              style={{
+                position: 'absolute',
+                top: '16px',
+                left: '16px',
+                padding: '6px 14px',
+                borderRadius: '999px',
+                background: 'rgba(7, 9, 14, 0.85)',
+                backdropFilter: 'blur(8px)',
+                fontSize: '0.65rem',
+                color: 'var(--accent-cyan)',
+                border: '1px solid var(--accent-cyan)',
+                fontWeight: 700,
+                letterSpacing: '0.12em',
+              }}
+            >
+              ● SEPTEMBER 2026
+            </div>
+            {/* Title overlay on image */}
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '24px',
+                left: '24px',
+                right: '24px',
+              }}
+            >
+              <h3
+                className="font-display"
+                style={{
+                  fontSize: 'clamp(1.8rem, 4vw, 3rem)',
+                  fontWeight: 800,
+                  color: '#ffffff',
+                  letterSpacing: '-0.03em',
+                  lineHeight: 1.1,
+                  marginBottom: '4px',
+                }}
+              >
+                MINDMIRROR <span style={{ color: 'var(--accent-cyan)' }}>2K26</span>
+              </h3>
+            </div>
+          </div>
+
+          {/* Card content */}
+          <div
+            style={{
+              padding: '24px 28px',
+              backgroundColor: 'var(--bg-card)',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '16px',
+            }}
+          >
+            <div>
+              <div
+                className="font-mono"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  fontSize: '0.75rem',
+                  color: 'var(--text-muted)',
+                  marginBottom: '6px',
+                }}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <Calendar size={12} color="var(--accent-cyan)" />
+                  10 September 2026
+                </span>
+                <span>·</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <MapPin size={12} color="var(--accent-cyan)" />
+                  Seminar Hall
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: '0.88rem',
+                  lineHeight: 1.55,
+                  color: 'var(--text-secondary)',
+                  maxWidth: '560px',
+                  margin: 0,
+                }}
+              >
+                The landmark orientation event featuring inauguration, faculty addresses, and collaborative engagement at Silicon Institute of Technology.
+              </p>
+            </div>
+            <button
+              className="mm-view-btn"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'var(--accent-cyan)',
+                color: '#07090e',
+                border: 'none',
+                padding: '12px 24px',
+                borderRadius: '10px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                letterSpacing: '0.06em',
+                transition: 'all 0.25s ease',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
+              onClick={(e) => { e.stopPropagation(); sound.playClick(); onOpenMindMirror?.(); }}
+            >
+              VIEW VISUAL RECAP
+              <ArrowRight size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════════
             AUGUST 2026 EVENT STORY — Complete Visual Narrative
             (Opening → Live Telemetry → Finals → Winners → First-Year 2026)
         ═══════════════════════════════════════════════════════════════════ */}
@@ -157,7 +317,7 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
             }}
           >
             <Flame size={13} />
-            LATEST COMPLETED EVENT STORY · AUGUST 2026
+            COMPLETED EVENT STORY · AUGUST 2026
           </div>
           <h3
             className="font-display"
@@ -1076,6 +1236,19 @@ export const EventShowcase: React.FC<EventShowcaseProps> = () => {
         .upcoming-event-card:hover {
           transform: translateY(-2px);
           border-color: var(--accent-cyan) !important;
+        }
+
+        /* MindMirror Event Card */
+        .mm-event-card:hover {
+          transform: translateY(-3px);
+          border-color: var(--accent-cyan) !important;
+        }
+        .mm-event-card:hover .mm-card-hero-img {
+          transform: scale(1.03);
+        }
+        .mm-view-btn:hover {
+          opacity: 0.9;
+          transform: translateX(2px);
         }
 
         /* Finals Hero Moment */
