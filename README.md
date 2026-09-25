@@ -38,6 +38,28 @@ To ensure visual balance and prevent distortion or aggressive cropping across vi
 
 ---
 
+## MindMirror 2K26 — Orientation Showcase & Visual Archive
+
+The platform integrates a dedicated, editorial-grade visual chronicle for **MindMirror 2K26** (10 September 2026, Seminar Hall, Silicon Institute of Technology):
+
+### Narrative Sequence & Gallery Architecture
+1. **Cinematic Hero**: Full-bleed orientation banner projection with dynamic gradient scrim and contextual metadata badges.
+2. **01 · Inauguration & Ceremonial Commencement**:
+   - Full-width panoramic dais photo featuring faculty panel (Dr. Simanchal Bag, Dr. Chinmayee Padhy, Dr. Manoj Kumar Mahapatra).
+   - 3-column ceremonial lamp lighting triptych by senior faculty dignitaries and coordinators.
+3. **02 · Faculty Addresses**: Podium speeches and orientation discourses delivered to attendees.
+4. **03 · Student Presentations & Web Platform Showcase**: Live stage demonstrations including presentation of the official Silicon Quiz Club portal.
+5. **04 · The Audience**: Wide-angle seminar hall atmosphere and crowd perspective.
+6. **05 · Engagement & Interaction**: High-engagement audience interaction gallery utilizing a balanced 2+3 editorial grid layout.
+7. **06 · Closing Ceremony**: Certificate of participation conferrals and formal conclusion.
+
+### Interactive Lightbox & Accessibility Standards
+- **Keyboard Navigation**: `Left` / `Right` arrow keys for sequential image browsing, `Esc` or background click to dismiss.
+- **Touch Gesture Support**: Mobile swipe gestures (`deltaX` detection) for fluid photo browsing and swipe-down dismiss.
+- **Accessibility & Semantics**: `role="dialog"`, `aria-modal="true"`, focus visibility rings, and `decoding="async"` for optimal render performance.
+
+---
+
 ## Local Development
 
 ### Prerequisites
