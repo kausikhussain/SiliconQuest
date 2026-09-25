@@ -48,23 +48,23 @@ export const getEventStatus = (isoDate?: string, fallbackStatus?: string): 'UPCO
 
 export const CLUB_EVENTS: ClubEvent[] = [
   // ═════════════════════════════════════════════════════════════════════════
-  // UPCOMING — ONLY ONE CONFIRMED EVENT
+  // COMPLETED — MINDMIRROR 2K26 (10 SEPTEMBER 2026)
   // ═════════════════════════════════════════════════════════════════════════
   {
-    id: 'orientation-programme-2026',
-    title: 'ORIENTATION PROGRAMME',
-    subtitle: 'Silicon Quiz Club Induction',
-    edition: '2026 Intake',
+    id: 'mindmirror-2k26',
+    title: 'MINDMIRROR 2K26',
+    subtitle: 'Silicon Quiz Club Orientation',
+    edition: '2026',
     date: '10 SEPTEMBER 2026',
     isoDate: '2026-09-10',
     year: 2026,
-    category: 'Induction',
-    location: 'Silicon Institute of Technology, Sambalpur',
-    venue: 'Silicon Campus',
-    description: 'Welcome and introductory orientation session for new students and quiz aspirants, introducing the club culture, upcoming initiatives, and competitive formats.',
-    shortDescription: 'Welcome and introduction to Silicon Quiz Club, club culture, and competitive leagues.',
-    image: '/assets/images/WhatsApp Image 2026-08-23 at 12.49.07 AM.jpeg',
-    status: 'UPCOMING'
+    category: 'Orientation',
+    location: 'Seminar Hall, Silicon Institute of Technology, Sambalpur',
+    venue: 'Seminar Hall',
+    description: 'MindMirror 2K26 — the landmark orientation programme of Silicon Quiz Club featuring inaugural ceremonies, faculty addresses, student presentations, audience engagement, and certificate distribution.',
+    shortDescription: 'The landmark orientation event featuring inauguration, faculty addresses, and collaborative engagement at Silicon Institute of Technology.',
+    image: '/assets/images/1/Banner.jpeg',
+    status: 'COMPLETED'
   },
 
   // ═════════════════════════════════════════════════════════════════════════
