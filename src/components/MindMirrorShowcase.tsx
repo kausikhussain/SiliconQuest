@@ -320,11 +320,21 @@ export const MindMirrorShowcase: React.FC<MindMirrorShowcaseProps> = ({ isOpen, 
           borderRadius: '12px',
           border: '1px solid var(--border-subtle)',
         }}
+        role="button"
+        tabIndex={0}
+        aria-label={`View photo: ${img.alt}`}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openLightbox(globalIdx);
+          }
+        }}
       >
         <img
           src={img.src}
           alt={img.alt}
           loading="lazy"
+          decoding="async"
           style={{
             width: '100%',
             height: '100%',
@@ -726,6 +736,9 @@ export const MindMirrorShowcase: React.FC<MindMirrorShowcaseProps> = ({ isOpen, 
       {lightboxIdx !== null && (
         <div
           className="mm-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image lightbox viewer"
           style={{
             position: 'fixed',
             inset: 0,
